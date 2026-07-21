@@ -1,0 +1,14 @@
+question: '¿Cuál es el mejor nombre para una variable booleana que indica si un usuario puede editar un documento?'
+options:
+  - 'editar'
+  - 'flag'
+  - 'puedeEditar'
+  - 'usuarioEditor2'
+correct: 2
+explanation: >-
+  Los booleanos se nombran como predicados (esValido, tienePermiso,
+  puedeEditar): se leen naturales en un if y no dejan dudas del tipo.
+  "editar" parece una acción, "flag" no dice nada y "usuarioEditor2" añade
+  un sufijo numérico que no distingue nada.
+category: buenas-practicas
+difficulty: facil

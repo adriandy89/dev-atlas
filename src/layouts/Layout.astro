@@ -1,0 +1,83 @@
+---
+import '../styles/global.css';
+import { Font } from 'astro:assets';
+import SEO from '../components/SEO.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AuroraBackground from '../components/AuroraBackground.astro';
+import { t } from '../ui';
+
+interface Props {
+  title: string;
+  description: string;
+  type?: 'website' | 'article';
+  updated?: Date;
+  section?: string;
+}
+
+const { title, description, type, updated, section } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#070b14" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <Font cssVariable="--font-sans" preload />
+    <Font cssVariable="--font-display" preload />
+    <Font cssVariable="--font-mono" />
+    <SEO {title} {description} {type} {updated} {section} />
+    <script is:inline>
+      // Marca que hay JS: activa las animaciones .reveal (ver global.css)
+      document.documentElement.classList.add('js');
+      // Dark-first: sin elección guardada el sitio es oscuro. Si el usuario
+      // eligió tema, se aplica antes del primer render (evita el parpadeo).
+      try {
+        var theme = localStorage.getItem('theme');
+        if (theme === 'light' || theme === 'dark') {
+          document.documentElement.dataset.theme = theme;
+        }
+        if (theme === 'light') {
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', '#f4f7fb');
+        }
+      } catch (e) {
+        /* localStorage no disponible (p. ej. modo privado): tema oscuro */
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#contenido">{t.nav.skip}</a>
+    <AuroraBackground />
+    <Header />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      // Aparición de secciones al hacer scroll (respeta prefers-reduced-motion)
+      const els = document.querySelectorAll<HTMLElement>('.reveal');
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduced || !('IntersectionObserver' in window)) {
+        els.forEach((el) => el.classList.add('visible'));
+      } else {
+        const io = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                io.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.12, rootMargin: '0px 0px -40px 0px' },
+        );
+        els.forEach((el) => io.observe(el));
+      }
+    </script>
+  </body>
+</html>

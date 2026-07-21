@@ -1,0 +1,48 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { t } from '../ui';
+import { formatDate } from '../lib/format';
+import { readingTime } from '../lib/reading-time';
+import { slugDeTema } from '../lib/content';
+import Badge from './Badge.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  entry: CollectionEntry<'temas'>;
+  /** Muestra también la categoría (útil fuera de su página de categoría) */
+  showCategory?: string;
+}
+
+const { entry, showCategory } = Astro.props;
+const href = `/temas/${entry.data.category}/${slugDeTema(entry)}/`;
+const minutos = readingTime(entry.body);
+
+const nivelVariant = {
+  fundamentos: 'cyan',
+  intermedio: 'violet',
+  avanzado: 'medio',
+} as const;
+---
+
+<a class="card glass glass-aurora glass-aurora-hover" href={href}>
+  <div class="card-badges">
+    <Badge text={t.labels.nivel[entry.data.level]} variant={nivelVariant[entry.data.level]} />
+    {showCategory && <Badge text={showCategory} />}
+  </div>
+  <h3>{entry.data.title}</h3>
+  <p class="card-desc">{entry.data.description}</p>
+  <p class="card-meta">
+    <Icon name="reloj" size={14} />
+    {t.labels.minLectura(minutos)}
+    <span aria-hidden="true">·</span>
+    {formatDate(entry.data.updated)}
+  </p>
+</a>
+
+<style>
+  .card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+</style>

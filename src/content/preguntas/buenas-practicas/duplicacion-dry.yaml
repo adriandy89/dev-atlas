@@ -1,0 +1,14 @@
+question: '¿Qué prohíbe realmente el principio DRY (Don''t Repeat Yourself)?'
+options:
+  - 'Cualquier fragmento de código repetido'
+  - 'Duplicar una misma pieza de conocimiento o regla de negocio'
+  - 'Usar la misma librería en dos módulos'
+  - 'Escribir tests que repiten llamadas al mismo método'
+correct: 1
+explanation: >-
+  DRY habla de conocimiento, no de líneas: cada regla debe tener una única
+  representación autoritativa. Dos fragmentos idénticos que representan
+  conceptos distintos pueden (y a veces deben) seguir separados — unificarlos
+  crea la abstracción equivocada.
+category: buenas-practicas
+difficulty: facil

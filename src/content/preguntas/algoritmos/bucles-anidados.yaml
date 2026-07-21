@@ -1,0 +1,15 @@
+question: >-
+  Un algoritmo recorre un array con un bucle y, dentro, otro bucle recorre el
+  mismo array completo. ¿Cuál es su complejidad temporal?
+options:
+  - 'O(n)'
+  - 'O(2n)'
+  - 'O(n²)'
+  - 'O(n log n)'
+correct: 2
+explanation: >-
+  Por cada uno de los n elementos del bucle exterior, el interior hace n
+  iteraciones: n × n = n². (O(2n) ni siquiera es una clase distinta: las
+  constantes se descartan y 2n sigue siendo O(n).)
+category: algoritmos
+difficulty: medio

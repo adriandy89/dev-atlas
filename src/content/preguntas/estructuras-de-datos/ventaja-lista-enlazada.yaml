@@ -1,0 +1,14 @@
+question: '¿Qué ventaja tiene una lista enlazada frente a un array dinámico?'
+options:
+  - 'Acceso por índice más rápido'
+  - 'Menor consumo de memoria por elemento'
+  - 'Insertar o borrar al principio en O(1)'
+  - 'Mejor aprovechamiento de la caché de la CPU'
+correct: 2
+explanation: >-
+  Insertar al principio de una lista enlazada solo reajusta punteros: O(1). En
+  un array hay que desplazar todos los elementos: O(n). A cambio, la lista
+  pierde en todo lo demás: acceso por índice O(n), punteros extra por nodo y
+  peor localidad de caché.
+category: estructuras-de-datos
+difficulty: medio

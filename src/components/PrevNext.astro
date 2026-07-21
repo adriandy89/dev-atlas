@@ -1,0 +1,101 @@
+---
+import { t } from '../ui';
+import Icon from './Icon.astro';
+
+interface Enlace {
+  href: string;
+  title: string;
+}
+
+interface Props {
+  anterior?: Enlace;
+  siguiente?: Enlace;
+}
+
+const { anterior, siguiente } = Astro.props;
+---
+
+{
+  (anterior || siguiente) && (
+    <nav class="prevnext" aria-label="Navegación entre temas">
+      {anterior ? (
+        <a class="pn glass" href={anterior.href} rel="prev">
+          <span class="pn-label">
+            <span class="flip">
+              <Icon name="flecha" size={14} />
+            </span>
+            {t.labels.anterior}
+          </span>
+          <span class="pn-title">{anterior.title}</span>
+        </a>
+      ) : (
+        <span />
+      )}
+      {siguiente && (
+        <a class="pn glass pn-next" href={siguiente.href} rel="next">
+          <span class="pn-label">
+            {t.labels.siguiente}
+            <Icon name="flecha" size={14} />
+          </span>
+          <span class="pn-title">{siguiente.title}</span>
+        </a>
+      )}
+    </nav>
+  )
+}
+
+<style>
+  .prevnext {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    margin-top: 3rem;
+  }
+
+  @media (min-width: 680px) {
+    .prevnext {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .pn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .pn:hover {
+    border-color: var(--border-strong);
+  }
+
+  .pn-next {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .pn-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--cyan);
+  }
+
+  .flip {
+    display: inline-flex;
+    transform: scaleX(-1);
+  }
+
+  .pn-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9375rem;
+  }
+</style>

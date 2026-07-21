@@ -1,0 +1,13 @@
+question: '¿Cuál es la complejidad temporal de quicksort en el caso promedio?'
+options:
+  - 'O(n²)'
+  - 'O(n)'
+  - 'O(n log n)'
+  - 'O(log n)'
+correct: 2
+explanation: >-
+  Con pivotes razonables, cada partición divide el problema aproximadamente a la
+  mitad: log n niveles con trabajo O(n) por nivel → O(n log n). El O(n²) es su
+  peor caso (pivotes pésimos, p. ej. array ya ordenado con pivote en el extremo).
+category: algoritmos
+difficulty: medio

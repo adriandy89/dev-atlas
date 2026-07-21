@@ -1,0 +1,173 @@
+---
+import { render } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import TOC from '../../../components/TOC.astro';
+import PrevNext from '../../../components/PrevNext.astro';
+import Badge from '../../../components/Badge.astro';
+import Icon from '../../../components/Icon.astro';
+import { CATEGORIAS } from '../../../lib/categorias';
+import { getTemas, slugDeTema, prevNext } from '../../../lib/content';
+import { readingTime } from '../../../lib/reading-time';
+import { formatDate } from '../../../lib/format';
+import { t } from '../../../ui';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const temas = await getTemas();
+  return temas.map((entry) => ({
+    params: { categoria: entry.data.category, slug: slugDeTema(entry) },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<'temas'>;
+}
+
+const { entry } = Astro.props;
+const cat = CATEGORIAS[entry.data.category];
+const { Content, headings } = await render(entry);
+const minutos = readingTime(entry.body);
+
+const temasCategoria = await getTemas(cat.slug);
+const vecinos = prevNext(temasCategoria, entry);
+const enlace = (e: CollectionEntry<'temas'>) => ({
+  href: `/temas/${e.data.category}/${slugDeTema(e)}/`,
+  title: e.data.title,
+});
+
+const nivelVariant = { fundamentos: 'cyan', intermedio: 'violet', avanzado: 'medio' } as const;
+---
+
+<Layout
+  title={entry.data.title}
+  description={entry.data.description}
+  type="article"
+  updated={entry.data.updated}
+  section={cat.name}
+>
+  <div class="container article-grid">
+    <article class="article-main">
+      <nav class="crumbs crumbs-top" aria-label="Migas de pan">
+        <a href="/temas/">{t.nav.temas}</a>
+        <span class="sep" aria-hidden="true">/</span>
+        <a href={`/temas/${cat.slug}/`}>{cat.name}</a>
+      </nav>
+
+      <header class="article-head">
+        <div class="badges">
+          <Badge text={t.labels.nivel[entry.data.level]} variant={nivelVariant[entry.data.level]} />
+          <Badge text={cat.name} variant={cat.color} />
+        </div>
+        <h1>{entry.data.title}</h1>
+        <p class="article-desc">{entry.data.description}</p>
+        <p class="article-meta">
+          <Icon name="reloj" size={14} />
+          {t.labels.minLectura(minutos)}
+          <span aria-hidden="true">·</span>
+          {t.labels.actualizado}
+          {formatDate(entry.data.updated)}
+        </p>
+      </header>
+
+      <TOC headings={headings} variant="inline" />
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      {
+        entry.data.tags.length > 0 && (
+          <p class="article-tags">
+            {entry.data.tags.map((tag) => (
+              <span class="badge">#{tag}</span>
+            ))}
+          </p>
+        )
+      }
+
+      <PrevNext
+        anterior={vecinos.anterior && enlace(vecinos.anterior)}
+        siguiente={vecinos.siguiente && enlace(vecinos.siguiente)}
+      />
+    </article>
+
+    <aside class="article-aside">
+      <div class="aside-sticky">
+        <TOC headings={headings} variant="aside" />
+      </div>
+    </aside>
+  </div>
+</Layout>
+
+<style>
+  .crumbs-top {
+    padding-top: 1.5rem;
+  }
+
+  .article-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .article-head {
+    padding-block: 1.5rem 2rem;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: var(--text-h1);
+    max-width: 24ch;
+  }
+
+  .article-desc {
+    margin-top: 0.9rem;
+    color: var(--text-muted);
+    max-width: 58ch;
+  }
+
+  .article-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--text-muted);
+  }
+
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-top: 2.5rem;
+  }
+
+  .article-aside {
+    display: none;
+  }
+
+  @media (min-width: 880px) {
+    .article-grid {
+      grid-template-columns: minmax(0, 1fr) 240px;
+      gap: 3.5rem;
+    }
+
+    .article-aside {
+      display: block;
+      padding-top: 5.5rem;
+    }
+
+    .aside-sticky {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>

@@ -1,0 +1,141 @@
+---
+import { render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Badge from '../../components/Badge.astro';
+import Icon from '../../components/Icon.astro';
+import { CATEGORIAS } from '../../lib/categorias';
+import { getProblemas } from '../../lib/content';
+import { formatDate } from '../../lib/format';
+import { t } from '../../ui';
+import type { CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const problemas = await getProblemas();
+  return problemas.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: CollectionEntry<'problemas'>;
+}
+
+const { entry } = Astro.props;
+const cat = CATEGORIAS[entry.data.category];
+const { Content } = await render(entry);
+---
+
+<Layout
+  title={entry.data.title}
+  description={entry.data.description}
+  type="article"
+  updated={entry.data.updated}
+  section={cat.name}
+>
+  <div class="container problema">
+    <nav class="crumbs crumbs-top" aria-label="Migas de pan">
+      <a href="/problemas/">{t.nav.problemas}</a>
+      <span class="sep" aria-hidden="true">/</span>
+      <span aria-current="page">{entry.data.title}</span>
+    </nav>
+
+    <header class="problema-head">
+      <div class="badges">
+        <Badge text={t.labels.dificultad[entry.data.difficulty]} variant={entry.data.difficulty} />
+        <Badge text={cat.name} variant={cat.color} />
+        {entry.data.tags.map((tag) => <Badge text={`#${tag}`} />)}
+      </div>
+      <h1>{entry.data.title}</h1>
+      <p class="problema-meta">
+        <Icon name="reloj" size={14} />
+        {t.labels.actualizado}
+        {formatDate(entry.data.updated)}
+      </p>
+    </header>
+
+    {
+      entry.data.hints.length > 0 && (
+        <section class="pistas" aria-label="Pistas progresivas">
+          {entry.data.hints.map((pista, i) => (
+            <details class="panel pista">
+              <summary>Pista {i + 1}</summary>
+              <p>{pista}</p>
+            </details>
+          ))}
+        </section>
+      )
+    }
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <p class="volver">
+      <a class="btn btn-ghost btn-sm" href="/problemas/">
+        <span class="flip"><Icon name="flecha" size={16} /></span>
+        {t.labels.volver}
+      </a>
+    </p>
+  </div>
+</Layout>
+
+<style>
+  .problema {
+    max-width: calc(var(--container-prose) + 2.5rem);
+  }
+
+  .crumbs-top {
+    padding-top: 1.5rem;
+  }
+
+  .problema-head {
+    padding-block: 1.5rem 1.75rem;
+  }
+
+  .badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+
+  h1 {
+    font-size: var(--text-h1);
+  }
+
+  .problema-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--text-muted);
+  }
+
+  /* Pistas compactas antes del enunciado (patrón LeetCode: colapsadas,
+     sin spoiler; el lector las abre solo si se atasca) */
+  .pistas {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .pista summary {
+    font-size: var(--text-small);
+    padding: 0.65rem 1.1rem;
+  }
+
+  .pista p {
+    font-size: var(--text-small);
+    color: var(--text-muted);
+  }
+
+  .volver {
+    margin-top: 2.5rem;
+  }
+
+  .flip {
+    display: inline-flex;
+    transform: scaleX(-1);
+  }
+</style>

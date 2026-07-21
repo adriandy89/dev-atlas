@@ -1,0 +1,12 @@
+question: '¿Cuál es la complejidad temporal de la búsqueda binaria en el peor caso?'
+options:
+  - 'O(n)'
+  - 'O(log n)'
+  - 'O(n log n)'
+  - 'O(1)'
+correct: 1
+explanation: >-
+  En cada paso la búsqueda binaria descarta la mitad del espacio de búsqueda,
+  por lo que necesita como mucho log₂(n) comparaciones.
+category: algoritmos
+difficulty: facil

@@ -1,0 +1,148 @@
+---
+import { SITE } from '../config';
+import { t } from '../ui';
+import { listaCategorias } from '../lib/categorias';
+
+const secciones = [
+  { href: '/temas/', label: t.nav.temas },
+  { href: '/problemas/', label: t.nav.problemas },
+  { href: '/quiz/', label: t.nav.quiz },
+  { href: '/glosario/', label: t.nav.glosario },
+  { href: '/recursos/', label: t.nav.recursos },
+  { href: '/sobre/', label: t.nav.sobre },
+];
+
+const destacadas = listaCategorias.slice(0, 5);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="/">Dev<span class="text-aurora">Atlas</span></a>
+        <p>{t.footer.tagline}</p>
+      </div>
+
+      <nav aria-label={t.footer.secciones}>
+        <h2>{t.footer.secciones}</h2>
+        <ul>
+          {
+            secciones.map((s) => (
+              <li>
+                <a href={s.href}>{s.label}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <nav aria-label={t.footer.categorias}>
+        <h2>{t.footer.categorias}</h2>
+        <ul>
+          {
+            destacadas.map((c) => (
+              <li>
+                <a href={`/temas/${c.slug}/`}>{c.name}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© {year} {SITE.name} · {SITE.author}</p>
+      <p>
+        <a href={SITE.social.github} rel="noopener">GitHub</a>
+        <span aria-hidden="true"> · </span>{t.footer.hecho}
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--section-pad);
+    border-top: 1px solid var(--border);
+    background: light-dark(rgba(255, 255, 255, 0.5), rgba(148, 163, 184, 0.04));
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    padding-block: 3rem 2rem;
+    font-size: var(--text-small);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-brand .brand {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-decoration: none;
+  }
+
+  .footer-brand p {
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+    max-width: 32ch;
+  }
+
+  h2 {
+    font-size: 0.8125rem;
+    font-family: var(--font-mono);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    margin-bottom: 0.9rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  ul a {
+    text-decoration: none;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+  }
+
+  ul a:hover {
+    color: var(--text);
+  }
+
+  .footer-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    justify-content: space-between;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .footer-bottom a {
+    color: var(--text-muted);
+  }
+
+  .footer-bottom a:hover {
+    color: var(--cyan);
+  }
+
+  @media (min-width: 680px) {
+    .footer-grid {
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>

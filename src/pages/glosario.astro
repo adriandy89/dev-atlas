@@ -1,0 +1,187 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import Badge from '../components/Badge.astro';
+import { CATEGORIAS } from '../lib/categorias';
+import { t } from '../ui';
+
+const terminos = await getCollection('glosario');
+
+// Agrupar por inicial (sin acentos), en orden alfabético
+const inicial = (s: string) =>
+  s
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .charAt(0)
+    .toUpperCase();
+
+const grupos = new Map<string, typeof terminos>();
+for (const termino of [...terminos].sort((a, b) =>
+  a.data.termino.localeCompare(b.data.termino, 'es'),
+)) {
+  const letra = inicial(termino.data.termino);
+  grupos.set(letra, [...(grupos.get(letra) ?? []), termino]);
+}
+
+const letras = [...grupos.keys()];
+const abecedario = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const porId = new Map(terminos.map((termino) => [termino.data.id, termino.data.termino]));
+---
+
+<Layout
+  title="Glosario"
+  description="Glosario de términos de ingeniería de software explicados en una o dos frases: Big-O, idempotencia, deuda técnica, race condition y más."
+>
+  <div class="container glosario">
+    <header class="page-head">
+      <p class="eyebrow">Vocabulario compartido</p>
+      <h1>Glosario</h1>
+      <p class="page-sub">
+        {terminos.length} términos que aparecen una y otra vez en documentación, entrevistas y
+        conversaciones de equipo, explicados sin rodeos.
+      </p>
+    </header>
+
+    <nav class="letras glass" aria-label="Índice alfabético">
+      {
+        abecedario.map((letra) =>
+          grupos.has(letra) ? (
+            <a href={`#letra-${letra}`}>{letra}</a>
+          ) : (
+            <span aria-hidden="true">{letra}</span>
+          ),
+        )
+      }
+    </nav>
+
+    {
+      letras.map((letra) => (
+        <section class="grupo" aria-labelledby={`letra-${letra}`}>
+          <h2 class="letra text-aurora" id={`letra-${letra}`}>
+            {letra}
+          </h2>
+          <div class="terminos">
+            {grupos.get(letra)!.map((termino) => (
+              <article class="termino card glass" id={termino.data.id}>
+                <div class="termino-head">
+                  <h3>{termino.data.termino}</h3>
+                  {termino.data.categoria && (
+                    <Badge
+                      text={CATEGORIAS[termino.data.categoria].name}
+                      variant={CATEGORIAS[termino.data.categoria].color}
+                    />
+                  )}
+                </div>
+                <p class="card-desc">{termino.data.definicion}</p>
+                {termino.data.relacionados.length > 0 && (
+                  <p class="relacionados">
+                    Ver también:{' '}
+                    {termino.data.relacionados
+                      .filter((id) => porId.has(id))
+                      .map((id, i, arr) => (
+                        <>
+                          <a href={`#${id}`}>{porId.get(id)}</a>
+                          {i < arr.length - 1 && ', '}
+                        </>
+                      ))}
+                  </p>
+                )}
+              </article>
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Layout>
+
+<style>
+  .letras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: var(--radius-lg);
+    font-family: var(--font-mono);
+    font-size: var(--text-small);
+    margin-bottom: 2rem;
+    position: sticky;
+    top: calc(var(--header-h) + 0.75rem);
+    z-index: 10;
+  }
+
+  .letras a,
+  .letras span {
+    display: grid;
+    place-items: center;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+
+  .letras a {
+    color: var(--cyan);
+  }
+
+  .letras a:hover {
+    background: var(--accent-soft);
+  }
+
+  .letras span {
+    color: var(--text-muted);
+    opacity: 0.4;
+  }
+
+  .grupo {
+    margin-bottom: 2.5rem;
+  }
+
+  .letra {
+    font-size: var(--text-h2);
+    margin-bottom: 1rem;
+    scroll-margin-top: calc(var(--header-h) + 4rem);
+  }
+
+  .terminos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .termino {
+    scroll-margin-top: calc(var(--header-h) + 4rem);
+  }
+
+  .termino-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .termino-head h3 {
+    font-size: var(--text-h3);
+  }
+
+  .relacionados {
+    font-size: var(--text-small);
+    color: var(--text-muted);
+  }
+
+  .relacionados a {
+    color: var(--cyan);
+    text-decoration: none;
+  }
+
+  .relacionados a:hover {
+    text-decoration: underline;
+  }
+
+  @media (min-width: 880px) {
+    .terminos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

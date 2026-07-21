@@ -1,0 +1,443 @@
+---
+import type { QuizQuestion } from '../../lib/quiz-types';
+import { t } from '../../ui';
+
+/**
+ * Isla del quiz. El pool de preguntas viaja al cliente incrustado como
+ * JSON en el DOM (los <script> procesados se comparten entre páginas,
+ * así que NUNCA deben contener datos de una página concreta).
+ */
+interface Props {
+  /** Slug de la categoría (clave de stats en localStorage) */
+  categoria: string;
+  pool: QuizQuestion[];
+}
+
+const { categoria, pool } = Astro.props;
+
+const conteo = {
+  facil: pool.filter((q) => q.difficulty === 'facil').length,
+  medio: pool.filter((q) => q.difficulty === 'medio').length,
+  dificil: pool.filter((q) => q.difficulty === 'dificil').length,
+};
+
+const json = JSON.stringify(pool).replace(/</g, '\\u003c');
+---
+
+<div class="quiz glass glass-aurora" data-quiz data-categoria={categoria}>
+  <script type="application/json" data-quiz-data set:html={json} />
+
+  {/* Pantalla 1: configuración */}
+  <section data-pantalla="setup">
+    <h2 class="q-titulo">Configura tu quiz</h2>
+
+    <fieldset class="q-grupo">
+      <legend>Dificultad</legend>
+      <div class="q-radios">
+        <label class="q-radio">
+          <input type="radio" name="dificultad" value="" checked />
+          <span>Todas ({pool.length})</span>
+        </label>
+        {
+          (['facil', 'medio', 'dificil'] as const).map((d) => (
+            <label class="q-radio">
+              <input type="radio" name="dificultad" value={d} disabled={conteo[d] === 0} />
+              <span>
+                {t.labels.dificultad[d]} ({conteo[d]})
+              </span>
+            </label>
+          ))
+        }
+      </div>
+    </fieldset>
+
+    <fieldset class="q-grupo">
+      <legend>Número de preguntas</legend>
+      <div class="q-radios">
+        <label class="q-radio">
+          <input type="radio" name="cantidad" value="5" disabled={pool.length < 5} />
+          <span>5</span>
+        </label>
+        <label class="q-radio">
+          <input type="radio" name="cantidad" value="10" disabled={pool.length < 10} />
+          <span>10</span>
+        </label>
+        <label class="q-radio">
+          <input type="radio" name="cantidad" value="todas" checked />
+          <span>Todas</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <label class="q-check">
+      <input type="checkbox" name="barajar" checked />
+      <span>Barajar preguntas y opciones</span>
+    </label>
+
+    <p class="q-aviso" data-aviso hidden>No hay preguntas con esa dificultad.</p>
+
+    <button class="btn btn-primary" type="button" data-accion="empezar">Empezar</button>
+  </section>
+
+  {/* Pantalla 2: pregunta */}
+  <section data-pantalla="juego" hidden>
+    <div class="q-progreso">
+      <p class="q-contador" data-contador></p>
+      <div
+        class="q-barra"
+        role="progressbar"
+        aria-label="Progreso del quiz"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-valuenow="0"
+        data-barra
+      >
+        <span class="q-barra-relleno" data-barra-relleno></span>
+      </div>
+    </div>
+
+    <h2 class="q-enunciado" tabindex="-1" data-enunciado></h2>
+    <div class="q-opciones" data-opciones></div>
+    <div class="q-feedback" aria-live="polite" data-feedback></div>
+
+    <div class="q-acciones">
+      <button class="btn btn-primary" type="button" data-accion="siguiente" hidden>
+        Siguiente
+      </button>
+    </div>
+  </section>
+
+  {/* Pantalla 3: resultado */}
+  <section data-pantalla="resultado" hidden>
+    <p class="q-resultado-eyebrow eyebrow">Resultado</p>
+    <p class="q-score text-aurora" tabindex="-1" data-score></p>
+    <p class="q-mensaje" data-mensaje></p>
+    <p class="q-marcas" data-marcas></p>
+
+    <h3 class="q-falladas-titulo" data-falladas-titulo hidden>Para repasar</h3>
+    <div class="q-falladas" data-falladas></div>
+
+    <div class="q-acciones">
+      <button class="btn btn-primary" type="button" data-accion="repetir">Repetir</button>
+      <button class="btn btn-ghost" type="button" data-accion="configurar">
+        Cambiar configuración
+      </button>
+      <a class="btn btn-ghost" href="/quiz/">Otros quiz</a>
+    </div>
+  </section>
+</div>
+
+<style>
+  .quiz {
+    border-radius: var(--radius-lg);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .q-titulo {
+    font-size: var(--text-h2);
+    margin-bottom: 1.5rem;
+  }
+
+  /* --- Setup --- */
+  .q-grupo {
+    border: 0;
+    padding: 0;
+    margin: 0 0 1.25rem;
+  }
+
+  .q-grupo legend {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    margin-bottom: 0.6rem;
+  }
+
+  .q-radios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Radios estilizados como chips (el input queda accesible, solo se oculta visualmente) */
+  .q-radio input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .q-radio span {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-size: var(--text-small);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .q-radio input:checked + span {
+    color: light-dark(#ffffff, #052029);
+    background: var(--accent);
+    border-color: transparent;
+    box-shadow: 0 0 16px var(--glow-cyan);
+  }
+
+  .q-radio input:focus-visible + span {
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+  }
+
+  .q-radio input:disabled + span {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .q-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--text-small);
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+  }
+
+  .q-check input {
+    accent-color: var(--accent);
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  .q-aviso {
+    color: var(--dificil);
+    font-size: var(--text-small);
+    margin-bottom: 1rem;
+  }
+
+  /* --- Juego --- */
+  .q-progreso {
+    margin-bottom: 1.5rem;
+  }
+
+  .q-contador {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .q-barra {
+    height: 6px;
+    border-radius: 999px;
+    background: light-dark(rgba(15, 32, 60, 0.08), rgba(148, 197, 255, 0.1));
+    overflow: hidden;
+  }
+
+  .q-barra-relleno {
+    display: block;
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    background: var(--grad-aurora);
+    transition: width 0.35s ease;
+  }
+
+  .q-enunciado {
+    font-size: 1.35rem;
+    margin-bottom: 1.25rem;
+    outline: none;
+  }
+
+  .q-opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .q-opciones :global(.q-opt) {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    text-align: left;
+    font-size: 0.9375rem;
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease,
+      transform 0.15s ease;
+  }
+
+  .q-opciones :global(.q-opt:not(:disabled):hover) {
+    border-color: light-dark(rgba(14, 116, 144, 0.5), rgba(34, 211, 238, 0.5));
+    background: var(--accent-soft);
+  }
+
+  .q-opciones :global(.q-opt:not(:disabled):active) {
+    transform: translateY(1px);
+  }
+
+  .q-opciones :global(.q-opt-letra) {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--cyan);
+  }
+
+  .q-opciones :global(.q-opt-texto) {
+    flex: 1;
+  }
+
+  .q-opciones :global(.q-opt-marca) {
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .q-opciones :global(.q-opt.is-correct) {
+    border-color: color-mix(in srgb, var(--facil) 55%, transparent);
+    background: color-mix(in srgb, var(--facil) 12%, transparent);
+    color: var(--text);
+  }
+
+  .q-opciones :global(.q-opt.is-correct .q-opt-marca),
+  .q-opciones :global(.q-opt.is-correct .q-opt-letra) {
+    color: var(--facil);
+    border-color: currentColor;
+  }
+
+  .q-opciones :global(.q-opt.is-wrong) {
+    border-color: color-mix(in srgb, var(--dificil) 55%, transparent);
+    background: color-mix(in srgb, var(--dificil) 10%, transparent);
+  }
+
+  .q-opciones :global(.q-opt.is-wrong .q-opt-marca),
+  .q-opciones :global(.q-opt.is-wrong .q-opt-letra) {
+    color: var(--dificil);
+    border-color: currentColor;
+  }
+
+  .q-opciones :global(.q-opt:disabled) {
+    cursor: default;
+    opacity: 0.92;
+  }
+
+  .q-feedback {
+    margin-top: 1.25rem;
+    border-radius: var(--radius);
+  }
+
+  .q-feedback.is-ok,
+  .q-feedback.is-ko {
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+  }
+
+  .q-feedback.is-ok {
+    border-color: color-mix(in srgb, var(--facil) 40%, transparent);
+    background: color-mix(in srgb, var(--facil) 8%, transparent);
+  }
+
+  .q-feedback.is-ko {
+    border-color: color-mix(in srgb, var(--dificil) 40%, transparent);
+    background: color-mix(in srgb, var(--dificil) 7%, transparent);
+  }
+
+  .q-feedback :global(.q-feedback-titulo) {
+    font-family: var(--font-display);
+    font-weight: 600;
+  }
+
+  .q-feedback.is-ok :global(.q-feedback-titulo) {
+    color: var(--facil);
+  }
+
+  .q-feedback.is-ko :global(.q-feedback-titulo) {
+    color: var(--dificil);
+  }
+
+  .q-feedback :global(.q-feedback-explicacion) {
+    margin-top: 0.4rem;
+    font-size: var(--text-small);
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .q-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+  }
+
+  /* --- Resultado --- */
+  .q-score {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 3rem);
+    margin-top: 0.75rem;
+    outline: none;
+  }
+
+  .q-mensaje {
+    margin-top: 0.5rem;
+  }
+
+  .q-marcas {
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--cyan);
+  }
+
+  .q-falladas-titulo {
+    margin-top: 1.75rem;
+    font-size: var(--text-h3);
+  }
+
+  .q-falladas {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.75rem;
+  }
+
+  .q-falladas :global(.q-fallada) {
+    padding: 0.85rem 1.1rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .q-falladas :global(.q-fallada-pregunta) {
+    font-weight: 550;
+    font-size: var(--text-small);
+  }
+
+  .q-falladas :global(.q-fallada-respuesta) {
+    margin-top: 0.25rem;
+    font-size: var(--text-small);
+    color: var(--facil);
+  }
+</style>
+
+<script>
+  import { initQuiz } from './quiz';
+  initQuiz();
+</script>

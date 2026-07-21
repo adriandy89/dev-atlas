@@ -1,0 +1,14 @@
+question: 'Integras una librería de pagos cuya interfaz no encaja con la que espera tu aplicación. Sin tocar la librería, ¿qué patrón aplicas?'
+options:
+  - 'Observer'
+  - 'Adapter'
+  - 'Singleton'
+  - 'Template Method'
+correct: 1
+explanation: >-
+  Adapter envuelve una interfaz existente y la traduce a la que esperan los
+  consumidores — exactamente el caso de integrar código de terceros que no
+  puedes modificar. Es un patrón estructural: no cambia comportamiento, cambia
+  la forma de encajar.
+category: patrones-de-diseno
+difficulty: dificil

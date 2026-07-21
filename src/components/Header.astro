@@ -1,0 +1,290 @@
+---
+import { t } from '../ui';
+
+const navItems = [
+  { href: '/temas/', label: t.nav.temas },
+  { href: '/problemas/', label: t.nav.problemas },
+  { href: '/quiz/', label: t.nav.quiz },
+  { href: '/glosario/', label: t.nav.glosario },
+  { href: '/recursos/', label: t.nav.recursos },
+];
+
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="/">Dev<span class="text-aurora">Atlas</span></a>
+
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-menu"
+      aria-label={t.nav.ariaToggle}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+        <path class="i-open" d="M4 7h16M4 12h16M4 17h16"></path>
+        <path class="i-close" d="M6 6l12 12M18 6 6 18"></path>
+      </svg>
+    </button>
+
+    <div class="site-menu" id="site-menu">
+      <nav aria-label={t.nav.ariaMain}>
+        <ul class="nav-list">
+          {
+            navItems.map((item) => (
+              <li>
+                <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+
+    <button class="theme-toggle" type="button" aria-label={t.nav.ariaTheme}>
+      <svg
+        class="i-sun"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="4"></circle>
+        <path
+          d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+        ></path>
+      </svg>
+      <svg
+        class="i-moon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: light-dark(rgba(244, 247, 251, 0.78), rgba(7, 11, 20, 0.7));
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .site-header {
+      background: light-dark(rgba(244, 247, 251, 0.97), rgba(7, 11, 20, 0.97));
+    }
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: var(--header-h);
+  }
+
+  .brand {
+    margin-right: auto;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.2rem;
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+
+  /* --- Botones de icono: hamburguesa (solo móvil) y tema --- */
+  .nav-toggle,
+  .theme-toggle {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    transition:
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .nav-toggle:hover,
+  .theme-toggle:hover {
+    border-color: var(--border-strong);
+    color: var(--cyan);
+  }
+
+  /* En móvil el hamburguesa queda en el extremo derecho, tras el botón de tema */
+  .nav-toggle {
+    order: 2;
+  }
+
+  .nav-toggle svg,
+  .theme-toggle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .nav-toggle .i-close {
+    display: none;
+  }
+
+  .site-header[data-open] .i-open {
+    display: none;
+  }
+
+  .site-header[data-open] .i-close {
+    display: block;
+  }
+
+  /* --- Botón de tema: el icono indica el tema al que se cambiará.
+         Dark-first: sin data-theme el sitio es oscuro → se ofrece el sol. --- */
+  .theme-toggle .i-moon {
+    display: none;
+  }
+
+  :global(html[data-theme='light']) .theme-toggle .i-sun {
+    display: none;
+  }
+
+  :global(html[data-theme='light']) .theme-toggle .i-moon {
+    display: block;
+  }
+
+  /* --- Menú: panel desplegable en móvil --- */
+  .site-menu {
+    display: none;
+    position: absolute;
+    top: var(--header-h);
+    left: 0;
+    right: 0;
+    padding: 1rem 1.25rem 1.5rem;
+    background: light-dark(rgba(244, 247, 251, 0.97), rgba(7, 11, 20, 0.96));
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .site-header[data-open] .site-menu {
+    display: block;
+  }
+
+  .nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .nav-list a {
+    display: block;
+    padding: 0.6rem 0.65rem;
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.9375rem;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  .nav-list a:hover {
+    color: var(--text);
+  }
+
+  .nav-list a[aria-current='page'] {
+    color: var(--cyan);
+    background: var(--accent-soft);
+  }
+
+  /* --- Escritorio --- */
+  @media (min-width: 880px) {
+    .nav-toggle {
+      display: none;
+    }
+
+    .site-menu {
+      display: block;
+      position: static;
+      padding: 0;
+      background: none;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      border: 0;
+    }
+
+    .nav-list {
+      flex-direction: row;
+      gap: 0.25rem;
+    }
+
+    .nav-list a {
+      padding: 0.5rem 0.75rem;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector('.site-header');
+  const toggle = header?.querySelector('.nav-toggle');
+  if (header && toggle) {
+    toggle.addEventListener('click', () => {
+      const open = header.toggleAttribute('data-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+    // Cierra el panel al navegar
+    header.querySelectorAll('#site-menu a').forEach((link) => {
+      link.addEventListener('click', () => {
+        header.removeAttribute('data-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
+
+  // Cambio de tema: alterna claro/oscuro y guarda la elección.
+  // Dark-first: sin atributo, el tema efectivo es oscuro.
+  const themeToggle = document.querySelector('.theme-toggle');
+  themeToggle?.addEventListener('click', () => {
+    const root = document.documentElement;
+    const current = root.dataset.theme ?? 'dark';
+    const next = current === 'light' ? 'dark' : 'light';
+    root.dataset.theme = next;
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', next === 'light' ? '#f4f7fb' : '#070b14');
+    try {
+      localStorage.setItem('theme', next);
+    } catch {
+      /* localStorage no disponible: el cambio solo dura esta página */
+    }
+  });
+</script>

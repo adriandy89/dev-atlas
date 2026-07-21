@@ -1,0 +1,14 @@
+question: '¿Qué es una colisión en una tabla hash?'
+options:
+  - 'Dos hilos escriben la misma clave a la vez'
+  - 'Dos claves distintas caen en el mismo bucket'
+  - 'Una clave se inserta dos veces con valores distintos'
+  - 'La tabla se queda sin memoria al redimensionarse'
+correct: 1
+explanation: >-
+  Hay infinitas claves posibles y buckets finitos, así que dos claves distintas
+  acabarán compartiendo índice: eso es una colisión. Se resuelve con
+  encadenamiento (lista por bucket) o direccionamiento abierto (probar el
+  siguiente hueco).
+category: estructuras-de-datos
+difficulty: medio

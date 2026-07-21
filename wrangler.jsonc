@@ -1,0 +1,29 @@
+// ============================================================
+// Cloudflare Workers — DevAtlas (sitio estático, sin SSR)
+//
+// Worker "solo assets": sirve dist/ desde la red global de
+// Cloudflare sin ejecutar código (las peticiones de estáticos
+// son gratuitas e ilimitadas). Si algún día hace falta SSR
+// (formularios, rutas dinámicas), se añade el adaptador
+// @astrojs/cloudflare y un "main" aquí — sin cambiar de plataforma.
+//
+// Desplegar: pnpm run deploy   (requiere `wrangler login` la 1.ª vez)
+// ============================================================
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dev-atlas",
+  "compatibility_date": "2026-07-01",
+
+  "assets": {
+    "directory": "./dist",
+    // /temas → /temas/ con 301 (coincide con trailingSlash: 'always' de Astro)
+    "html_handling": "auto-trailing-slash",
+    // Sirve dist/404.html con código de estado 404 real (bueno para SEO)
+    "not_found_handling": "404-page"
+  },
+
+  // Sin dominio propio aún: se publica en dev-atlas.<cuenta>.workers.dev.
+  // Cuando haya dominio: poner esto a false y añadir
+  // "routes": [{ "pattern": "tudominio.com", "custom_domain": true }]
+  "workers_dev": true
+}

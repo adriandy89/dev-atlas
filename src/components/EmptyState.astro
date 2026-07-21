@@ -1,0 +1,65 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  title: string;
+  sub?: string;
+  icon?: string;
+  ctaHref?: string;
+  ctaLabel?: string;
+}
+
+const { title, sub, icon = 'atlas', ctaHref, ctaLabel } = Astro.props;
+---
+
+<div class="empty glass">
+  <div class="empty-icon"><Icon name={icon} size={26} /></div>
+  <p class="empty-title">{title}</p>
+  {sub && <p class="empty-sub">{sub}</p>}
+  {
+    ctaHref && ctaLabel && (
+      <a class="btn btn-ghost btn-sm" href={ctaHref}>
+        {ctaLabel}
+      </a>
+    )
+  }
+</div>
+
+<style>
+  .empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 3rem 1.5rem;
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+
+  .empty-icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    color: var(--cyan);
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+  }
+
+  .empty-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+
+  .empty-sub {
+    color: var(--text-muted);
+    font-size: var(--text-small);
+    max-width: 40ch;
+  }
+
+  .btn {
+    margin-top: 0.75rem;
+  }
+</style>

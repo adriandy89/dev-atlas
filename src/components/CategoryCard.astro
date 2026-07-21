@@ -1,0 +1,59 @@
+---
+import type { Categoria } from '../lib/categorias';
+import Icon from './Icon.astro';
+
+interface Props {
+  categoria: Categoria;
+  /** Texto del pie (p. ej. "3 temas" o "Próximamente") */
+  meta?: string;
+  /** Destino (por defecto, la categoría en Temas) */
+  href?: string;
+  /** Atenuada (categoría aún sin contenido) */
+  muted?: boolean;
+}
+
+const { categoria, meta, href = `/temas/${categoria.slug}/`, muted = false } = Astro.props;
+---
+
+<a
+  class:list={[
+    'card glass glass-aurora glass-aurora-hover cat-card',
+    `cat-${categoria.color}`,
+    muted && 'is-muted',
+  ]}
+  href={href}
+>
+  <span class="cat-icon"><Icon name={categoria.icon} size={22} /></span>
+  <h3>{categoria.name}</h3>
+  <p class="card-desc">{categoria.description}</p>
+  {meta && <p class="card-meta">{meta}</p>}
+</a>
+
+<style>
+  .cat-icon {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .cat-cyan .cat-icon {
+    color: var(--cyan);
+    background: var(--accent-soft);
+  }
+
+  .cat-violet .cat-icon {
+    color: var(--violet);
+    background: var(--violet-soft);
+  }
+
+  .is-muted {
+    opacity: 0.65;
+  }
+
+  .is-muted .card-meta {
+    color: var(--violet);
+  }
+</style>

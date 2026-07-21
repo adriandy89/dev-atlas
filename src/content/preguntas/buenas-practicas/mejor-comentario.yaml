@@ -1,0 +1,14 @@
+question: '¿Cuál de estos comentarios aporta más valor en un código bien escrito?'
+options:
+  - '// incrementa i en 1'
+  - '// bucle sobre los usuarios'
+  - '// TODO: arreglar esto'
+  - '// límite a 50: la API de pagos rechaza lotes mayores'
+correct: 3
+explanation: >-
+  El código ya dice QUÉ hace; el comentario valioso explica el PORQUÉ — una
+  restricción externa que el código no puede expresar. Los dos primeros repiten
+  el código (ruido que envejece mal) y un TODO sin contexto ni referencia no
+  compromete a nadie.
+category: buenas-practicas
+difficulty: medio

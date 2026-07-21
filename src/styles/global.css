@@ -1,0 +1,734 @@
+/* ============================================================
+   SISTEMA DE DISEÑO "AURORA" — glassmorphism, dark-first, mobile-first
+   Tokens centralizados: cambia la marca desde estas variables.
+   Cada token de color usa light-dark(valor claro, valor oscuro).
+
+   DARK-FIRST: sin elección guardada el sitio se muestra oscuro
+   (es la identidad de la marca). El botón de la cabecera fija
+   data-theme en <html> y lo persiste en localStorage.
+   Para volver a seguir al sistema operativo: cambia el
+   `color-scheme: dark` de :root por `color-scheme: light dark`.
+   ============================================================ */
+
+:root {
+  /* Superficies — oscuro: azul-negro profundo; claro: blanco frío */
+  --bg: light-dark(#f4f7fb, #070b14);
+  --bg-2: light-dark(#eaf0f8, #0a1020);
+  /* Superficie "cristal": translúcida, pensada para backdrop-filter */
+  --surface: light-dark(rgba(255, 255, 255, 0.66), rgba(148, 163, 184, 0.055));
+  --surface-2: light-dark(rgba(255, 255, 255, 0.85), rgba(148, 163, 184, 0.09));
+  /* Fallback sólido cuando el navegador no soporta backdrop-filter */
+  --surface-solid: light-dark(#ffffff, #0d1424);
+  --border: light-dark(rgba(15, 32, 60, 0.1), rgba(148, 197, 255, 0.12));
+  --border-strong: light-dark(rgba(15, 32, 60, 0.2), rgba(148, 197, 255, 0.22));
+
+  /* Texto */
+  --text: light-dark(#0c1526, #e6edf8);
+  --text-muted: light-dark(#4f5e78, #93a3bc);
+
+  /* Acentos aurora — cian eléctrico + violeta (AA sobre --bg en ambos temas) */
+  --cyan: light-dark(#0e7490, #22d3ee);
+  --violet: light-dark(#6d28d9, #a78bfa);
+  --accent: light-dark(#0e7490, #22d3ee); /* fondos interactivos (botones) */
+  --accent-contrast: light-dark(#ffffff, #052029); /* texto sobre --accent */
+  --accent-hover: light-dark(#155e75, #67e8f9);
+  --accent-soft: light-dark(rgba(14, 116, 144, 0.08), rgba(34, 211, 238, 0.1));
+  --violet-soft: light-dark(rgba(109, 40, 217, 0.08), rgba(139, 92, 246, 0.12));
+  --grad-aurora: linear-gradient(135deg, var(--cyan), var(--violet));
+  --glow-cyan: light-dark(rgba(8, 145, 178, 0.14), rgba(34, 211, 238, 0.18));
+  --glow-violet: light-dark(rgba(109, 40, 217, 0.12), rgba(139, 92, 246, 0.18));
+
+  /* Dificultad / estado (texto de acento + fondo suave del mismo tono) */
+  --facil: light-dark(#15803d, #4ade80);
+  --medio: light-dark(#b45309, #fbbf24);
+  --dificil: light-dark(#b91c1c, #f87171);
+  --ok: var(--facil);
+
+  /* Fondo aurora decorativo (alfa muy bajo; nada de filter: blur) */
+  --aurora-1: light-dark(rgba(8, 145, 178, 0.1), rgba(34, 211, 238, 0.13));
+  --aurora-2: light-dark(rgba(124, 58, 237, 0.08), rgba(139, 92, 246, 0.12));
+  --aurora-3: light-dark(rgba(8, 145, 178, 0.05), rgba(34, 211, 238, 0.06));
+  --grid-line: light-dark(rgba(15, 32, 60, 0.055), rgba(148, 197, 255, 0.05));
+
+  /* Tipografía (las familias las inyecta la Fonts API de Astro) */
+  --text-hero: clamp(2.3rem, 5vw + 1rem, 4rem);
+  --text-h1: clamp(1.9rem, 3.2vw + 0.8rem, 2.8rem);
+  --text-h2: clamp(1.45rem, 2vw + 0.6rem, 2.1rem);
+  --text-h3: 1.15rem;
+  --text-body: 1.0625rem;
+  --text-small: 0.875rem;
+  --text-mono: 0.8125rem;
+
+  /* Layout */
+  --container: 1200px;
+  --container-prose: 760px;
+  --radius: 14px;
+  --radius-lg: 20px;
+  --section-pad: clamp(4rem, 9vw, 6.5rem);
+  --header-h: 4rem;
+
+  /* Dark-first: sin data-theme el sitio es oscuro (identidad de marca) */
+  color-scheme: dark;
+}
+
+/* Selección manual de tema (guardada en localStorage, aplicada por Layout.astro) */
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+/* ------------------------------------------------------------
+   Reset mínimo
+   ------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--header-h) + 1rem);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  min-height: 100dvh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display, var(--font-sans));
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+code,
+kbd,
+pre {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ------------------------------------------------------------
+   Utilidades de layout
+   ------------------------------------------------------------ */
+.container {
+  width: min(100% - 2.5rem, var(--container));
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: var(--section-pad);
+}
+
+.section-head {
+  max-width: 680px;
+  margin-bottom: clamp(2rem, 5vw, 3.5rem);
+}
+
+.section-head h2 {
+  font-size: var(--text-h2);
+  margin-top: 0.9rem;
+}
+
+.section-head .section-sub {
+  margin-top: 0.9rem;
+  color: var(--text-muted);
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--cyan);
+}
+
+/* Cabecera de página interior (hub de sección, detalle…) */
+.page-head {
+  padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.page-head h1 {
+  font-size: var(--text-h1);
+  margin-top: 0.9rem;
+  max-width: 22ch;
+}
+
+.page-head .page-sub {
+  margin-top: 0.9rem;
+  color: var(--text-muted);
+  max-width: 58ch;
+}
+
+/* Migas de pan */
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--text-muted);
+}
+
+.crumbs a {
+  text-decoration: none;
+  color: var(--text-muted);
+}
+
+.crumbs a:hover {
+  color: var(--cyan);
+}
+
+.crumbs .sep {
+  opacity: 0.5;
+}
+
+/* Rejillas de tarjetas (mobile-first: 1 → 2 → 3 columnas) */
+.card-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+.card-grid-2 {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 680px) {
+  .card-grid,
+  .card-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1080px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ------------------------------------------------------------
+   Glassmorphism
+   ------------------------------------------------------------ */
+.glass {
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  border: 1px solid var(--border);
+  box-shadow:
+    inset 0 1px 0 light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.06)),
+    0 8px 32px light-dark(rgba(15, 32, 60, 0.08), rgba(2, 8, 20, 0.35));
+}
+
+/* Sin soporte de backdrop-filter: superficie sólida equivalente */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: var(--surface-solid);
+  }
+}
+
+/* Borde degradado cian→violeta (para destacar tarjetas o en hover).
+   Técnica de máscara compuesta: funciona sobre fondos translúcidos. */
+.glass-aurora {
+  position: relative;
+}
+
+.glass-aurora::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    light-dark(rgba(14, 116, 144, 0.55), rgba(34, 211, 238, 0.55)),
+    light-dark(rgba(109, 40, 217, 0.55), rgba(139, 92, 246, 0.55))
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Variante: el borde degradado solo aparece al pasar el ratón */
+.glass-aurora-hover::before {
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.glass-aurora-hover:hover::before,
+.glass-aurora-hover:focus-visible::before {
+  opacity: 1;
+}
+
+/* Texto con degradado aurora */
+.text-aurora {
+  background: var(--grad-aurora);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ------------------------------------------------------------
+   Tarjetas
+   ------------------------------------------------------------ */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  transition:
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+@media (hover: hover) {
+  .card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.06)),
+      0 12px 40px light-dark(rgba(15, 32, 60, 0.12), rgba(2, 8, 20, 0.5)),
+      0 0 24px var(--glow-cyan);
+  }
+}
+
+a.card {
+  text-decoration: none;
+}
+
+.card h3 {
+  font-size: var(--text-h3);
+}
+
+.card .card-desc {
+  color: var(--text-muted);
+  font-size: var(--text-small);
+  line-height: 1.55;
+}
+
+.card .card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--text-muted);
+}
+
+/* ------------------------------------------------------------
+   Botones y chips
+   ------------------------------------------------------------ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  font-weight: 550;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border: 1px solid transparent;
+  box-shadow: 0 0 24px var(--glow-cyan);
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 0 32px var(--glow-cyan);
+}
+
+.btn-ghost {
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  background: transparent;
+}
+
+.btn-ghost:hover {
+  border-color: light-dark(rgba(14, 116, 144, 0.5), rgba(34, 211, 238, 0.5));
+  background: var(--accent-soft);
+}
+
+.btn-sm {
+  padding: 0.55rem 1.1rem;
+  font-size: 0.875rem;
+}
+
+/* Chips de filtro (estado con aria-pressed) */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--text-muted);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.chip:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.chip[aria-pressed='true'] {
+  color: light-dark(#ffffff, #052029);
+  background: var(--accent);
+  border-color: transparent;
+  box-shadow: 0 0 16px var(--glow-cyan);
+}
+
+/* ------------------------------------------------------------
+   Badges (dificultad, nivel, categoría, tag)
+   ------------------------------------------------------------ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.badge-facil {
+  color: var(--facil);
+  background: color-mix(in srgb, var(--facil) 12%, transparent);
+  border-color: color-mix(in srgb, var(--facil) 30%, transparent);
+}
+
+.badge-medio {
+  color: var(--medio);
+  background: color-mix(in srgb, var(--medio) 12%, transparent);
+  border-color: color-mix(in srgb, var(--medio) 30%, transparent);
+}
+
+.badge-dificil {
+  color: var(--dificil);
+  background: color-mix(in srgb, var(--dificil) 12%, transparent);
+  border-color: color-mix(in srgb, var(--dificil) 30%, transparent);
+}
+
+.badge-cyan {
+  color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 10%, transparent);
+  border-color: color-mix(in srgb, var(--cyan) 28%, transparent);
+}
+
+.badge-violet {
+  color: var(--violet);
+  background: color-mix(in srgb, var(--violet) 10%, transparent);
+  border-color: color-mix(in srgb, var(--violet) 28%, transparent);
+}
+
+/* ------------------------------------------------------------
+   Contenido markdown (.prose)
+   ------------------------------------------------------------ */
+.prose {
+  max-width: var(--container-prose);
+  font-size: var(--text-body);
+  line-height: 1.75;
+}
+
+.prose > * + * {
+  margin-top: 1em;
+}
+
+.prose h2 {
+  font-size: var(--text-h2);
+  margin-top: 2.2em;
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+
+.prose h3 {
+  font-size: 1.25rem;
+  margin-top: 1.8em;
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
+}
+
+.prose a {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--cyan) 45%, transparent);
+}
+
+.prose a:hover {
+  text-decoration-color: var(--cyan);
+}
+
+.prose strong {
+  font-weight: 650;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4rem;
+}
+
+.prose li + li {
+  margin-top: 0.4em;
+}
+
+.prose blockquote {
+  padding: 0.25rem 0 0.25rem 1.1rem;
+  border-left: 3px solid var(--cyan);
+  color: var(--text-muted);
+}
+
+.prose code:not(pre code) {
+  padding: 0.15em 0.45em;
+  border-radius: 6px;
+  font-size: 0.85em;
+  background: light-dark(rgba(14, 116, 144, 0.09), rgba(34, 211, 238, 0.1));
+  color: light-dark(#0c5a70, #7de3f4);
+  border: 1px solid light-dark(rgba(14, 116, 144, 0.18), rgba(34, 211, 238, 0.18));
+}
+
+.prose pre {
+  padding: 1.1rem 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow-x: auto;
+  font-size: var(--text-mono);
+  line-height: 1.6;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+  display: block;
+  overflow-x: auto;
+}
+
+.prose th,
+.prose td {
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.prose th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  background: var(--surface);
+}
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin-block: 2rem;
+}
+
+/* Bloques Shiki con doble tema: por defecto (sin data-theme o dark) se
+   aplican las variables --shiki-dark; con tema claro quedan los estilos
+   inline (tema claro) que genera Astro. */
+:root:not([data-theme='light']) .astro-code,
+:root:not([data-theme='light']) .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+
+/* Panel de solución colapsable (problemas) y pistas */
+.prose details,
+details.panel {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+  padding: 0;
+  overflow: hidden;
+}
+
+.prose details summary,
+details.panel summary {
+  padding: 0.9rem 1.25rem;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--cyan);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+.prose details summary::-webkit-details-marker,
+details.panel summary::-webkit-details-marker {
+  display: none;
+}
+
+.prose details summary::before,
+details.panel summary::before {
+  content: '▸';
+  transition: transform 0.2s ease;
+}
+
+.prose details[open] summary::before,
+details.panel[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.prose details > :not(summary),
+details.panel > :not(summary) {
+  margin: 0 1.25rem 1rem;
+}
+
+.prose details > :not(summary) + :not(summary),
+details.panel > :not(summary) + :not(summary) {
+  margin-top: 1em;
+}
+
+/* ------------------------------------------------------------
+   Animaciones de aparición al hacer scroll.
+   Solo se activan si hay JS (html.js) y sin reduced-motion;
+   sin JS el contenido se ve siempre.
+   ------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  html.js .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s ease;
+    transition-delay: var(--reveal-delay, 0s);
+  }
+
+  html.js .reveal.visible {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------
+   Accesibilidad
+   ------------------------------------------------------------ */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: var(--text-small);
+}
+
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

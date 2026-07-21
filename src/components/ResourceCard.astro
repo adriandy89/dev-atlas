@@ -1,0 +1,36 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { t } from '../ui';
+import Badge from './Badge.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  recurso: CollectionEntry<'recursos'>;
+}
+
+const { recurso } = Astro.props;
+const { title, url, description, type, lang, free } = recurso.data;
+const dominio = new URL(url).hostname.replace(/^www\./, '');
+---
+
+<a class="card glass glass-aurora glass-aurora-hover" href={url} rel="noopener" target="_blank">
+  <div class="card-badges">
+    <Badge text={t.labels.tipoRecurso[type]} variant="cyan" />
+    {lang === 'en' && <Badge text={t.labels.enIngles} />}
+    {free && <Badge text={t.labels.gratis} variant="facil" />}
+  </div>
+  <h3>{title}</h3>
+  <p class="card-desc">{description}</p>
+  <p class="card-meta">
+    <Icon name="externo" size={14} />
+    {dominio}
+  </p>
+</a>
+
+<style>
+  .card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+</style>

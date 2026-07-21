@@ -1,0 +1,288 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import CategoryCard from '../components/CategoryCard.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { SITE } from '../config';
+import { listaCategorias, CATEGORIAS } from '../lib/categorias';
+import { getTemas, getProblemas, getPreguntas, conteosPorCategoria } from '../lib/content';
+import { t } from '../ui';
+
+const [temas, problemas, preguntas, conteos] = await Promise.all([
+  getTemas(),
+  getProblemas(),
+  getPreguntas(),
+  conteosPorCategoria(),
+]);
+
+const ultimos = [...temas]
+  .sort((a, b) => b.data.updated.getTime() - a.data.updated.getTime())
+  .slice(0, 3);
+
+const stats = [
+  { valor: temas.length, etiqueta: 'temas' },
+  { valor: problemas.length, etiqueta: 'problemas' },
+  { valor: preguntas.length, etiqueta: 'preguntas' },
+  { valor: listaCategorias.length, etiqueta: 'categorías' },
+];
+
+const secciones = [
+  {
+    href: '/temas/',
+    icon: 'libro',
+    titulo: 'Temas',
+    desc: 'La teoría que no caduca, explicada con código y con las trampas señaladas.',
+    meta: t.labels.temasCount(temas.length),
+  },
+  {
+    href: '/problemas/',
+    icon: 'objetivo',
+    titulo: 'Problemas',
+    desc: 'Enunciados con ejemplos, pistas progresivas y solución razonada con complejidad.',
+    meta: t.labels.problemasCount(problemas.length),
+  },
+  {
+    href: '/quiz/',
+    icon: 'quiz',
+    titulo: 'Quiz',
+    desc: 'Preguntas de opción múltiple con explicación en cada respuesta. Tu progreso se guarda.',
+    meta: t.labels.preguntasCount(preguntas.length),
+  },
+];
+
+const destacadas = listaCategorias.filter((c) => (conteos.temas[c.slug] ?? 0) > 0);
+---
+
+<Layout
+  title={`${SITE.name} — Conocimiento de ingeniería de software`}
+  description={SITE.description}
+>
+  <section class="hero container">
+    <p class="eyebrow reveal">Atlas de ingeniería de software</p>
+    <h1 class="reveal">
+      Domina los fundamentos.<br />
+      <span class="text-aurora">Construye mejor software.</span>
+    </h1>
+    <p class="hero-sub reveal">
+      Temas explicados con claridad, problemas resueltos paso a paso y quiz para poner a prueba lo
+      que sabes. En español y sin ruido.
+    </p>
+    <div class="hero-cta reveal">
+      <a class="btn btn-primary" href="/temas/">Explorar temas <Icon name="flecha" size={18} /></a>
+      <a class="btn btn-ghost" href="/quiz/">Ponte a prueba</a>
+    </div>
+    <dl class="stats glass reveal">
+      {
+        stats.map((stat) => (
+          <div class="stat">
+            <dt class="visually-hidden">{stat.etiqueta}</dt>
+            <dd>
+              <span class="stat-num text-aurora">{stat.valor}</span>
+              <span class="stat-label">{stat.etiqueta}</span>
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="section container" aria-labelledby="titulo-secciones">
+    <div class="section-head">
+      <p class="eyebrow">Tres formas de aprender</p>
+      <h2 id="titulo-secciones">Leer, practicar, comprobar</h2>
+    </div>
+    <div class="card-grid">
+      {
+        secciones.map((seccion, i) => (
+          <a
+            class="card glass glass-aurora glass-aurora-hover seccion reveal"
+            style={`--reveal-delay: ${i * 0.08}s`}
+            href={seccion.href}
+          >
+            <span class="seccion-icon">
+              <Icon name={seccion.icon} size={24} />
+            </span>
+            <h3>{seccion.titulo}</h3>
+            <p class="card-desc">{seccion.desc}</p>
+            <p class="card-meta">
+              {seccion.meta}
+              <Icon name="flecha" size={14} />
+            </p>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="titulo-categorias">
+    <div class="section-head head-row">
+      <div>
+        <p class="eyebrow">Explora por área</p>
+        <h2 id="titulo-categorias">Categorías</h2>
+      </div>
+      <a class="btn btn-ghost btn-sm" href="/temas/">{t.labels.verTodo}</a>
+    </div>
+    <div class="card-grid">
+      {
+        destacadas.map((cat, i) => (
+          <div class="reveal" style={`--reveal-delay: ${(i % 3) * 0.07}s`}>
+            <CategoryCard categoria={cat} meta={t.labels.temasCount(conteos.temas[cat.slug] ?? 0)} />
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  {
+    ultimos.length > 0 && (
+      <section class="section container" aria-labelledby="titulo-ultimos">
+        <div class="section-head head-row">
+          <div>
+            <p class="eyebrow">Recién actualizado</p>
+            <h2 id="titulo-ultimos">Últimos temas</h2>
+          </div>
+          <a class="btn btn-ghost btn-sm" href="/temas/">
+            {t.labels.verTodo}
+          </a>
+        </div>
+        <div class="card-grid">
+          {ultimos.map((entry, i) => (
+            <div class="reveal" style={`--reveal-delay: ${i * 0.08}s`}>
+              <ArticleCard entry={entry} showCategory={CATEGORIAS[entry.data.category].name} />
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section container">
+    <div class="cta-quiz glass glass-aurora reveal">
+      <div>
+        <h2>¿Cuánto sabes <span class="text-aurora">de verdad</span>?</h2>
+        <p>
+          Responde el quiz por categorías: feedback inmediato, explicación en cada pregunta y tu
+          mejor marca guardada.
+        </p>
+      </div>
+      <a class="btn btn-primary" href="/quiz/">Empezar un quiz <Icon name="flecha" size={18} /></a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    padding-block: clamp(4.5rem, 11vw, 7.5rem) clamp(2.5rem, 6vw, 4rem);
+  }
+
+  h1 {
+    font-size: var(--text-hero);
+    max-width: 16ch;
+    margin-top: 1rem;
+  }
+
+  .hero-sub {
+    margin-top: 1.25rem;
+    color: var(--text-muted);
+    font-size: clamp(1.0625rem, 1.5vw, 1.1875rem);
+    max-width: 52ch;
+  }
+
+  .hero-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  /* Franja de métricas */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 3rem 0 0;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .stat dd {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+  }
+
+  .stat-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.9rem;
+    line-height: 1.1;
+  }
+
+  .stat-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* Tarjetas de sección */
+  .seccion-icon {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 14px;
+    color: var(--cyan);
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+  }
+
+  .seccion .card-meta {
+    color: var(--cyan);
+  }
+
+  .head-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: none;
+  }
+
+  .card-grid > .reveal {
+    display: grid;
+  }
+
+  /* Banda CTA final */
+  .cta-quiz {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+    padding: clamp(1.75rem, 5vw, 3rem);
+    border-radius: var(--radius-lg);
+  }
+
+  .cta-quiz h2 {
+    font-size: var(--text-h2);
+  }
+
+  .cta-quiz p {
+    margin-top: 0.75rem;
+    color: var(--text-muted);
+    max-width: 52ch;
+  }
+
+  @media (min-width: 680px) {
+    .stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .cta-quiz {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+</style>

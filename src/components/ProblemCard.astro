@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { t } from '../ui';
+import { CATEGORIAS } from '../lib/categorias';
+import Badge from './Badge.astro';
+
+interface Props {
+  entry: CollectionEntry<'problemas'>;
+}
+
+const { entry } = Astro.props;
+const href = `/problemas/${entry.id}/`;
+const cat = CATEGORIAS[entry.data.category];
+---
+
+<a class="card glass glass-aurora glass-aurora-hover" href={href}>
+  <div class="card-badges">
+    <Badge text={t.labels.dificultad[entry.data.difficulty]} variant={entry.data.difficulty} />
+    <Badge text={cat.name} variant={cat.color} />
+  </div>
+  <h3>{entry.data.title}</h3>
+  <p class="card-desc">{entry.data.description}</p>
+  {
+    entry.data.tags.length > 0 && (
+      <p class="card-meta">
+        {entry.data.tags.map((tag) => (
+          <span class="tag">#{tag}</span>
+        ))}
+      </p>
+    )
+  }
+</a>
+
+<style>
+  .card-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    opacity: 0.85;
+  }
+</style>

@@ -1,0 +1,14 @@
+question: 'Los patrones del catálogo GoF se dividen en tres categorías. ¿Cuáles son?'
+options:
+  - 'Creacionales, estructurales y de comportamiento'
+  - 'Arquitectónicos, de dominio y de datos'
+  - 'Síncronos, asíncronos y reactivos'
+  - 'De clase, de objeto y de módulo'
+correct: 0
+explanation: >-
+  Los 23 patrones del "Gang of Four" se agrupan en creacionales (cómo se crean
+  objetos: Singleton, Factory Method…), estructurales (cómo se componen:
+  Adapter, Decorator…) y de comportamiento (cómo colaboran: Observer,
+  Strategy…).
+category: patrones-de-diseno
+difficulty: medio

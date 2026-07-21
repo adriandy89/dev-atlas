@@ -1,0 +1,62 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { SITE } from '../config';
+---
+
+<Layout
+  title="Sobre DevAtlas"
+  description="Qué es DevAtlas, por qué existe y cómo está construido: un atlas de conocimiento de ingeniería de software en español."
+>
+  <div class="container sobre">
+    <header class="page-head">
+      <p class="eyebrow">El proyecto</p>
+      <h1>Sobre <span class="text-aurora">DevAtlas</span></h1>
+    </header>
+
+    <div class="prose">
+      <p>
+        DevAtlas es un atlas de conocimiento de ingeniería de software <strong>en español</strong>:
+        temas explicados con claridad, problemas resueltos paso a paso y quiz para comprobar lo que
+        de verdad se te ha quedado.
+      </p>
+
+      <h2>Por qué existe</h2>
+      <p>
+        La mayor parte del buen material técnico está en inglés, disperso y rodeado de ruido.
+        DevAtlas reúne los fundamentos que no caducan — algoritmos, estructuras de datos, patrones,
+        buenas prácticas, metodologías — en un solo lugar, sin anuncios y sin relleno.
+      </p>
+
+      <h2>Cómo se estudia aquí</h2>
+      <ul>
+        <li><strong>Temas</strong> — lee la explicación, con código y trampas habituales.</li>
+        <li><strong>Problemas</strong> — inténtalo tú; hay pistas progresivas antes de la solución.</li>
+        <li><strong>Quiz</strong> — comprueba la teoría con preguntas de opción múltiple y explicación en cada respuesta.</li>
+      </ul>
+      <p>
+        Leer &rarr; practicar &rarr; comprobar. La combinación de las tres es lo que fija el
+        conocimiento.
+      </p>
+
+      <h2>Cómo está construido</h2>
+      <p>
+        Con <a href="https://astro.build" rel="noopener">Astro</a>: HTML estático, cero JavaScript
+        salvo donde aporta (el quiz, los filtros), desplegado en la red global de Cloudflare. El
+        contenido vive en archivos markdown y YAML validados en cada build.
+      </p>
+
+      <h2>Quién lo hace</h2>
+      <p>
+        {SITE.author} — puedes ver más proyectos en
+        <a href={SITE.social.github} rel="noopener">GitHub</a>. El sitio crece poco a poco: cada
+        semana se añaden temas, problemas y preguntas nuevas.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .sobre .prose {
+    padding-bottom: 2rem;
+  }
+</style>

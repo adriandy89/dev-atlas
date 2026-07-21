@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Página no encontrada"
+  description="La página que buscas no existe o se ha movido."
+>
+  <section class="section container err">
+    <p class="eyebrow">Error 404</p>
+    <h1><span class="text-aurora">Página</span> no encontrada</h1>
+    <p class="err-sub">La ruta que buscas no existe o se ha movido.</p>
+    <div class="err-acciones">
+      <a class="btn btn-primary" href="/">Volver al inicio</a>
+      <a class="btn btn-ghost" href="/temas/">Explorar temas</a>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .err {
+    min-height: 55dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  h1 {
+    font-size: var(--text-h1);
+  }
+
+  .err-sub {
+    color: var(--text-muted);
+    max-width: 48ch;
+  }
+
+  .err-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+</style>

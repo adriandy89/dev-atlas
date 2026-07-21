@@ -1,0 +1,13 @@
+question: 'El historial de "deshacer" (Ctrl+Z) de un editor recupera primero el último cambio realizado. ¿Qué estructura de datos encaja con ese comportamiento?'
+options:
+  - 'Una cola (FIFO)'
+  - 'Una pila (LIFO)'
+  - 'Una tabla hash'
+  - 'Un árbol binario de búsqueda'
+correct: 1
+explanation: >-
+  "Lo último que hiciste es lo primero que se deshace" es exactamente LIFO
+  (Last In, First Out): una pila. Una cola (FIFO) desharía primero el cambio
+  más antiguo, que no es lo que esperas de Ctrl+Z.
+category: estructuras-de-datos
+difficulty: facil

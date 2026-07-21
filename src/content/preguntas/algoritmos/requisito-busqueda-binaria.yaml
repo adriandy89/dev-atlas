@@ -1,0 +1,13 @@
+question: '¿Qué condición es imprescindible para poder aplicar búsqueda binaria sobre un array?'
+options:
+  - 'Que el array no tenga elementos repetidos'
+  - 'Que el array esté ordenado'
+  - 'Que el array tenga un número par de elementos'
+  - 'Que los elementos sean números enteros'
+correct: 1
+explanation: >-
+  La búsqueda binaria decide hacia qué mitad continuar comparando con el elemento
+  central: esa decisión solo es válida si la colección está ordenada. Repetidos,
+  paridad o tipo de dato no impiden aplicarla.
+category: algoritmos
+difficulty: facil

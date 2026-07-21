@@ -1,0 +1,86 @@
+# Recursos externos recomendados — un recurso por entrada.
+# type: documentacion | libro | curso | video | herramienta | articulo
+- id: refactoring-guru
+  title: Refactoring.Guru — Patrones de diseño
+  url: https://refactoring.guru/es/design-patterns
+  description: >-
+    El catálogo de patrones GoF mejor explicado de internet: ilustraciones,
+    problema/solución, pros y contras, y ejemplos en varios lenguajes. En
+    español.
+  category: patrones-de-diseno
+  type: documentacion
+  lang: es
+
+- id: roadmap-sh
+  title: roadmap.sh
+  url: https://roadmap.sh
+  description: >-
+    Mapas visuales de aprendizaje por rol (frontend, backend, DevOps…) y por
+    tecnología, mantenidos por la comunidad. Útiles para saber qué estudiar
+    después.
+  category: metodologias
+  type: herramienta
+  lang: en
+
+- id: mdn
+  title: MDN Web Docs
+  url: https://developer.mozilla.org/es/
+  description: >-
+    La referencia canónica de la plataforma web: JavaScript, HTML, CSS y APIs
+    del navegador, con gran parte del contenido traducido al español.
+  category: buenas-practicas
+  type: documentacion
+  lang: es
+
+- id: javascript-info
+  title: The Modern JavaScript Tutorial
+  url: https://es.javascript.info
+  description: >-
+    Curso completo y gratuito de JavaScript moderno, desde fundamentos hasta
+    temas avanzados, con ejercicios. Traducido al español por la comunidad.
+  category: buenas-practicas
+  type: curso
+  lang: es
+
+- id: twelve-factor
+  title: The Twelve-Factor App
+  url: https://12factor.net/es/
+  description: >-
+    Doce principios para construir aplicaciones preparadas para la nube:
+    configuración, dependencias, logs, procesos… Base conceptual de mucho del
+    DevOps moderno. Disponible en español.
+  category: arquitectura
+  type: articulo
+  lang: es
+
+- id: big-o-cheatsheet
+  title: Big-O Cheat Sheet
+  url: https://www.bigocheatsheet.com
+  description: >-
+    Tabla de referencia con las complejidades de las estructuras de datos y
+    algoritmos de ordenación más comunes. Perfecta para repasar antes de una
+    entrevista.
+  category: algoritmos
+  type: herramienta
+  lang: en
+
+- id: owasp-top-10
+  title: OWASP Top 10
+  url: https://owasp.org/www-project-top-ten/
+  description: >-
+    La lista de referencia de los diez riesgos de seguridad más críticos en
+    aplicaciones web, con guías de prevención. Punto de partida obligado en
+    seguridad.
+  category: seguridad
+  type: documentacion
+  lang: en
+
+- id: web-dev
+  title: web.dev
+  url: https://web.dev
+  description: >-
+    Guías de Google sobre rendimiento, accesibilidad y buenas prácticas web
+    modernas, con métricas (Core Web Vitals) y ejemplos aplicables.
+  category: devops
+  type: documentacion
+  lang: en

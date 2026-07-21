@@ -1,0 +1,10 @@
+# No es un monorepo: `packages` apunta solo a la raíz. El campo es
+# obligatorio para versiones de pnpm anteriores a la local (p. ej. la
+# de Cloudflare Workers Builds), que fallan si falta.
+packages:
+  - '.'
+
+# Aprobación de scripts de instalación de dependencias (pnpm 10+)
+allowBuilds:
+  esbuild: true
+  sharp: true

@@ -1,0 +1,155 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProblemCard from '../../components/ProblemCard.astro';
+import EmptyState from '../../components/EmptyState.astro';
+import { CATEGORY_SLUGS, CATEGORIAS, type CategorySlug } from '../../lib/categorias';
+import { getProblemas } from '../../lib/content';
+import { t } from '../../ui';
+
+const problemas = await getProblemas();
+
+// Solo se ofrecen como filtro las categorías con algún problema
+const categoriasPresentes = CATEGORY_SLUGS.filter((slug) =>
+  problemas.some((p) => p.data.category === slug),
+);
+
+const dificultades = ['facil', 'medio', 'dificil'] as const;
+---
+
+<Layout
+  title="Problemas"
+  description="Problemas de programación resueltos paso a paso, con pistas progresivas, solución razonada y análisis de complejidad."
+>
+  <div class="container">
+    <header class="page-head">
+      <p class="eyebrow">Practica deliberada</p>
+      <h1>Problemas</h1>
+      <p class="page-sub">
+        Enunciados con ejemplos, pistas progresivas y solución razonada con su análisis de
+        complejidad. Intenta resolverlos antes de mirar.
+      </p>
+    </header>
+
+    <div class="filtros glass" data-filtros>
+      <div class="chips" role="group" aria-label="Filtrar por dificultad">
+        <button class="chip" data-grupo="dificultad" data-valor="" aria-pressed="true">
+          Todas
+        </button>
+        {
+          dificultades.map((d) => (
+            <button class="chip" data-grupo="dificultad" data-valor={d} aria-pressed="false">
+              {t.labels.dificultad[d]}
+            </button>
+          ))
+        }
+      </div>
+      <div class="chips" role="group" aria-label="Filtrar por categoría">
+        <button class="chip" data-grupo="categoria" data-valor="" aria-pressed="true">
+          Todas
+        </button>
+        {
+          categoriasPresentes.map((slug: CategorySlug) => (
+            <button class="chip" data-grupo="categoria" data-valor={slug} aria-pressed="false">
+              {CATEGORIAS[slug].name}
+            </button>
+          ))
+        }
+      </div>
+      <p class="conteo" aria-live="polite" data-conteo>{t.labels.problemasCount(problemas.length)}</p>
+    </div>
+
+    <ul class="card-grid lista-problemas" data-lista>
+      {
+        problemas.map((entry, i) => (
+          <li
+            class="reveal"
+            style={`--reveal-delay: ${(i % 3) * 0.07}s`}
+            data-dificultad={entry.data.difficulty}
+            data-categoria={entry.data.category}
+          >
+            <ProblemCard entry={entry} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <div data-vacio hidden>
+      <EmptyState icon="objetivo" title={t.empty.sinResultados} sub={t.empty.sinResultadosSub} />
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .filtros {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 1.75rem;
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .conteo {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--text-muted);
+  }
+
+  .lista-problemas {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .lista-problemas > li {
+    display: grid;
+  }
+
+  .lista-problemas > li > :global(a) {
+    height: 100%;
+  }
+</style>
+
+<script>
+  // Filtros combinables (dificultad × categoría), sin recargar la página.
+  const zona = document.querySelector('[data-filtros]');
+  const items = document.querySelectorAll<HTMLElement>('[data-lista] > li');
+  const conteo = document.querySelector('[data-conteo]');
+  const vacio = document.querySelector<HTMLElement>('[data-vacio]');
+  const lista = document.querySelector<HTMLElement>('[data-lista]');
+
+  const estado: Record<string, string> = { dificultad: '', categoria: '' };
+
+  function aplicar() {
+    let visibles = 0;
+    items.forEach((li) => {
+      const ok =
+        (!estado.dificultad || li.dataset.dificultad === estado.dificultad) &&
+        (!estado.categoria || li.dataset.categoria === estado.categoria);
+      li.hidden = !ok;
+      if (ok) visibles++;
+    });
+    if (conteo) {
+      conteo.textContent = `${visibles} ${visibles === 1 ? 'problema' : 'problemas'}`;
+    }
+    if (vacio) vacio.hidden = visibles > 0;
+    if (lista) lista.hidden = visibles === 0;
+  }
+
+  zona?.querySelectorAll<HTMLButtonElement>('.chip[data-grupo]').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      const grupo = chip.dataset.grupo!;
+      estado[grupo] = chip.dataset.valor ?? '';
+      zona
+        .querySelectorAll(`.chip[data-grupo="${grupo}"]`)
+        .forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      aplicar();
+    });
+  });
+</script>

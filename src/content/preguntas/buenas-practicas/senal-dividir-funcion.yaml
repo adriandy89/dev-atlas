@@ -1,0 +1,13 @@
+question: '¿Cuál de estas señales indica con más claridad que una función debería dividirse?'
+options:
+  - 'Tiene más de una línea de comentario'
+  - 'Su nombre natural necesitaría una "y" (procesarYGuardar)'
+  - 'Recibe dos parámetros'
+  - 'Es llamada desde más de un módulo'
+correct: 1
+explanation: >-
+  Un nombre honesto con "y" delata dos responsabilidades. Es la versión
+  práctica del principio de responsabilidad única: si no puedes nombrar la
+  función sin conjunciones, probablemente son dos funciones.
+category: buenas-practicas
+difficulty: medio

@@ -1,0 +1,13 @@
+question: '¿Cuál es la complejidad de acceder por índice a un elemento de un array (arr[i])?'
+options:
+  - 'O(1)'
+  - 'O(log n)'
+  - 'O(n)'
+  - 'Depende del valor almacenado'
+correct: 0
+explanation: >-
+  Los arrays ocupan memoria contigua: la dirección del elemento i se calcula
+  directamente (base + i × tamaño), sin recorrer nada. Por eso el acceso por
+  índice es O(1), sea cual sea el tamaño del array.
+category: estructuras-de-datos
+difficulty: facil

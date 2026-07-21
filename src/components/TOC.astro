@@ -1,0 +1,151 @@
+---
+import type { MarkdownHeading } from 'astro';
+import { t } from '../ui';
+
+/**
+ * Índice de contenidos a partir de los headings (h2/h3) del markdown.
+ * variant "inline": <details> colapsable para móvil (antes del artículo).
+ * variant "aside": lista fija para la columna lateral de escritorio.
+ * El scrollspy (marcar la sección visible) lo añade el <script> si hay JS.
+ */
+interface Props {
+  headings: MarkdownHeading[];
+  variant: 'inline' | 'aside';
+}
+
+const { headings, variant } = Astro.props;
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+
+{
+  items.length >= 2 &&
+    (variant === 'inline' ? (
+      <details class="panel toc toc-inline">
+        <summary>{t.labels.enEstaPagina}</summary>
+        <ul>
+          {items.map((h) => (
+            <li class={`d${h.depth}`}>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </details>
+    ) : (
+      <nav class="toc toc-aside" aria-label={t.labels.enEstaPagina}>
+        <p class="toc-title">{t.labels.enEstaPagina}</p>
+        <ul>
+          {items.map((h) => (
+            <li class={`d${h.depth}`}>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    ))
+}
+
+<style>
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    font-size: var(--text-small);
+  }
+
+  .d3 {
+    padding-left: 0.9rem;
+  }
+
+  a {
+    display: block;
+    padding: 0.3rem 0.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-muted);
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
+  }
+
+  a:hover {
+    color: var(--text);
+  }
+
+  a[aria-current='true'] {
+    color: var(--cyan);
+    background: var(--accent-soft);
+  }
+
+  /* Variante móvil (details) */
+  .toc-inline {
+    margin-bottom: 1.75rem;
+  }
+
+  .toc-inline ul {
+    margin: 0 1.25rem 1rem;
+  }
+
+  /* Variante lateral (escritorio) */
+  .toc-aside .toc-title {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    margin-bottom: 0.75rem;
+  }
+
+  .toc-aside {
+    border-left: 1px solid var(--border);
+    padding-left: 1.1rem;
+  }
+
+  @media (min-width: 880px) {
+    .toc-inline {
+      display: none;
+    }
+  }
+
+  @media (max-width: 879.98px) {
+    .toc-aside {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  // Scrollspy: marca en el TOC la sección visible (progresivo: sin JS,
+  // el índice sigue siendo una lista de anclas funcional).
+  const enlaces = document.querySelectorAll<HTMLAnchorElement>('.toc a[href^="#"]');
+  if (enlaces.length && 'IntersectionObserver' in window) {
+    const porId = new Map<string, HTMLAnchorElement[]>();
+    for (const enlace of enlaces) {
+      const id = decodeURIComponent(enlace.hash.slice(1));
+      const lista = porId.get(id) ?? [];
+      lista.push(enlace);
+      porId.set(id, lista);
+    }
+
+    const marcar = (id: string) => {
+      for (const enlace of enlaces) enlace.removeAttribute('aria-current');
+      for (const enlace of porId.get(id) ?? []) enlace.setAttribute('aria-current', 'true');
+    };
+
+    const objetivos = [...porId.keys()]
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) marcar(entry.target.id);
+        }
+      },
+      { rootMargin: '-15% 0px -70% 0px' },
+    );
+    objetivos.forEach((el) => io.observe(el));
+  }
+</script>

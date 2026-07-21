@@ -1,0 +1,96 @@
+# Glosario de DevAtlas — un término por entrada.
+# `id` es el slug (único, sin espacios); `relacionados` referencia otros ids.
+- id: algoritmo
+  termino: Algoritmo
+  definicion: >-
+    Secuencia finita y ordenada de pasos que resuelve un problema. Dos
+    algoritmos correctos pueden diferir enormemente en coste: compararlos es el
+    trabajo de la notación Big-O.
+  categoria: algoritmos
+  relacionados: [big-o]
+
+- id: big-o
+  termino: Big-O
+  definicion: >-
+    Notación que describe cómo crece el coste (tiempo o memoria) de un
+    algoritmo cuando crece la entrada, ignorando constantes. O(1), O(log n),
+    O(n), O(n log n), O(n²)… describen formas de crecimiento, no segundos.
+  categoria: algoritmos
+  relacionados: [algoritmo, complejidad-espacial]
+
+- id: complejidad-espacial
+  termino: Complejidad espacial
+  definicion: >-
+    Memoria extra que necesita un algoritmo en función del tamaño de la
+    entrada, expresada en notación Big-O. Un algoritmo "in situ" usa O(1)
+    espacio adicional.
+  categoria: algoritmos
+  relacionados: [big-o]
+
+- id: api
+  termino: API
+  definicion: >-
+    Application Programming Interface: el contrato que expone un sistema para
+    que otros lo usen sin conocer su interior — funciones de una librería,
+    endpoints HTTP de un servicio, o la interfaz pública de una clase.
+  categoria: arquitectura
+  relacionados: [idempotencia]
+
+- id: cache
+  termino: Caché
+  definicion: >-
+    Almacén rápido de resultados ya calculados u obtenidos, para no repetir el
+    trabajo. Sus dos problemas eternos: decidir qué expulsar cuando se llena
+    (políticas como LRU) y saber cuándo un dato guardado dejó de ser válido
+    (invalidación).
+  categoria: arquitectura
+  relacionados: [idempotencia]
+
+- id: idempotencia
+  termino: Idempotencia
+  definicion: >-
+    Propiedad de una operación que produce el mismo resultado aunque se ejecute
+    varias veces. Fundamental en APIs y sistemas distribuidos: permite
+    reintentar sin miedo a duplicar efectos (cobrar dos veces, crear dos
+    pedidos).
+  categoria: arquitectura
+  relacionados: [api]
+
+- id: inmutabilidad
+  termino: Inmutabilidad
+  definicion: >-
+    Diseño en el que los datos no se modifican tras crearse: cada cambio
+    produce una copia nueva. Elimina categorías enteras de bugs (nadie muta lo
+    que compartes) y simplifica la concurrencia, a cambio de más asignaciones
+    de memoria.
+  categoria: buenas-practicas
+  relacionados: [race-condition]
+
+- id: race-condition
+  termino: Condición de carrera
+  definicion: >-
+    Bug en el que el resultado depende del orden no determinista en que dos
+    procesos o hilos acceden a un recurso compartido. Difícil de reproducir por
+    naturaleza; se previene con exclusión mutua, atomicidad o inmutabilidad.
+  categoria: seguridad
+  relacionados: [inmutabilidad]
+
+- id: refactorizacion
+  termino: Refactorización
+  definicion: >-
+    Cambiar la estructura interna del código sin cambiar su comportamiento
+    observable, en pasos pequeños y verificables. Su red de seguridad son los
+    tests: sin ellos, no estás refactorizando — estás editando y cruzando los
+    dedos.
+  categoria: buenas-practicas
+  relacionados: [deuda-tecnica]
+
+- id: deuda-tecnica
+  termino: Deuda técnica
+  definicion: >-
+    Coste futuro de las decisiones que aceleran el presente: atajos, diseño
+    aplazado, tests ausentes. Como la financiera, cobra intereses — cada
+    cambio posterior cuesta más — y se gestiona: se registra, se prioriza y se
+    paga a plazos con refactorización.
+  categoria: metodologias
+  relacionados: [refactorizacion]

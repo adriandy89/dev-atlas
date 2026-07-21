@@ -1,0 +1,95 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Quiz from '../../components/quiz/Quiz.astro';
+import Icon from '../../components/Icon.astro';
+import { CATEGORIAS } from '../../lib/categorias';
+import { getPreguntas } from '../../lib/content';
+import { t } from '../../ui';
+import type { QuizQuestion } from '../../lib/quiz-types';
+
+export async function getStaticPaths() {
+  // Solo se genera página de quiz para categorías con al menos una pregunta
+  const preguntas = await getPreguntas();
+  const categorias = [...new Set(preguntas.map((p) => p.data.category))];
+  return categorias.map((categoria) => ({ params: { categoria } }));
+}
+
+const { categoria } = Astro.params;
+const cat = CATEGORIAS[categoria];
+const preguntas = await getPreguntas(cat.slug);
+
+const pool: QuizQuestion[] = preguntas.map((p) => ({
+  id: p.id,
+  question: p.data.question,
+  options: p.data.options,
+  correct: p.data.correct,
+  explanation: p.data.explanation,
+  difficulty: p.data.difficulty,
+}));
+---
+
+<Layout
+  title={`Quiz de ${cat.name}`}
+  description={`Quiz interactivo de ${cat.name}: ${pool.length} preguntas de opción múltiple con explicación en cada respuesta.`}
+>
+  <div class="container quiz-pagina">
+    <nav class="crumbs crumbs-top" aria-label="Migas de pan">
+      <a href="/quiz/">{t.nav.quiz}</a>
+      <span class="sep" aria-hidden="true">/</span>
+      <span aria-current="page">{cat.name}</span>
+    </nav>
+
+    <header class="page-head quiz-head">
+      <span class:list={['cat-icon', `cat-${cat.color}`]}><Icon name={cat.icon} size={26} /></span>
+      <div>
+        <h1>Quiz de {cat.name}</h1>
+        <p class="page-sub">
+          {t.labels.preguntasCount(pool.length)} · feedback inmediato con explicación
+        </p>
+      </div>
+    </header>
+
+    <Quiz categoria={cat.slug} pool={pool} />
+  </div>
+</Layout>
+
+<style>
+  .quiz-pagina {
+    max-width: 880px;
+  }
+
+  .crumbs-top {
+    padding-top: 1.5rem;
+  }
+
+  .quiz-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.1rem;
+    padding-top: 1.5rem;
+  }
+
+  .quiz-head h1 {
+    margin-top: 0;
+  }
+
+  .cat-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+  }
+
+  .cat-cyan {
+    color: var(--cyan);
+    background: var(--accent-soft);
+  }
+
+  .cat-violet {
+    color: var(--violet);
+    background: var(--violet-soft);
+  }
+</style>

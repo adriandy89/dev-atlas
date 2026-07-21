@@ -1,0 +1,14 @@
+question: '¿Qué garantiza el patrón Singleton?'
+options:
+  - 'Que una clase tenga una única instancia con acceso global'
+  - 'Que los objetos se creen sin exponer la clase concreta'
+  - 'Que varios objetos reciban notificaciones de un cambio'
+  - 'Que dos interfaces incompatibles puedan colaborar'
+correct: 0
+explanation: >-
+  Singleton restringe una clase a una sola instancia (constructor privado +
+  acceso estático). Las otras opciones describen Factory, Observer y Adapter.
+  Ojo: su acceso global es también su mayor crítica — introduce estado global
+  encubierto y complica los tests.
+category: patrones-de-diseno
+difficulty: facil

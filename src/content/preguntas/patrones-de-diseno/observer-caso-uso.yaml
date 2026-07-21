@@ -1,0 +1,13 @@
+question: 'addEventListener("click", fn) en el DOM es un ejemplo directo de un patrón de diseño. ¿De cuál?'
+options:
+  - 'Strategy'
+  - 'Decorator'
+  - 'Observer'
+  - 'Command'
+correct: 2
+explanation: >-
+  El elemento del DOM es el sujeto y los listeners son observadores que se
+  suscriben a sus cambios (eventos): Observer de libro. El sujeto no sabe qué
+  hacen sus observadores; solo los notifica cuando ocurre algo.
+category: patrones-de-diseno
+difficulty: medio

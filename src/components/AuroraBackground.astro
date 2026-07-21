@@ -1,0 +1,42 @@
+---
+/**
+ * Fondo decorativo fijo: blobs aurora (radial-gradients ya suaves,
+ * sin `filter: blur` — coste de pintura ~cero al hacer scroll) y una
+ * retícula sutil desvanecida con máscara. Va detrás de todo (z -1).
+ */
+---
+
+<div class="aurora-bg" aria-hidden="true">
+  <div class="aurora-blobs"></div>
+  <div class="aurora-grid"></div>
+</div>
+
+<style>
+  .aurora-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .aurora-blobs {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(42rem 30rem at 12% -5%, var(--aurora-1), transparent 70%),
+      radial-gradient(50rem 34rem at 88% 0%, var(--aurora-2), transparent 70%),
+      radial-gradient(60rem 40rem at 50% 110%, var(--aurora-3), transparent 70%);
+  }
+
+  .aurora-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 90% 65% at 50% 0%, #000, transparent 78%);
+    mask-image: radial-gradient(ellipse 90% 65% at 50% 0%, #000, transparent 78%);
+  }
+</style>

@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import ResourceCard from '../components/ResourceCard.astro';
+import Icon from '../components/Icon.astro';
+import { CATEGORY_SLUGS, CATEGORIAS } from '../lib/categorias';
+
+const recursos = await getCollection('recursos');
+
+// Secciones solo para categorías con recursos, en el orden canónico
+const secciones = CATEGORY_SLUGS.map((slug) => ({
+  categoria: CATEGORIAS[slug],
+  items: recursos.filter((recurso) => recurso.data.category === slug),
+})).filter((seccion) => seccion.items.length > 0);
+---
+
+<Layout
+  title="Recursos"
+  description="Selección curada de documentación, cursos, libros y herramientas para aprender ingeniería de software — con preferencia por recursos gratuitos y en español."
+>
+  <div class="container">
+    <header class="page-head">
+      <p class="eyebrow">Curados a mano</p>
+      <h1>Recursos</h1>
+      <p class="page-sub">
+        {recursos.length} enlaces que merecen tu tiempo: documentación de referencia, cursos y
+        herramientas, con preferencia por lo gratuito y lo disponible en español.
+      </p>
+    </header>
+
+    {
+      secciones.map(({ categoria, items }) => (
+        <section class="grupo" aria-labelledby={`recursos-${categoria.slug}`}>
+          <h2 id={`recursos-${categoria.slug}`}>
+            <span class:list={['grupo-icon', `cat-${categoria.color}`]}>
+              <Icon name={categoria.icon} size={18} />
+            </span>
+            {categoria.name}
+          </h2>
+          <div class="card-grid-2">
+            {items.map((recurso) => (
+              <ResourceCard recurso={recurso} />
+            ))}
+          </div>
+        </section>
+      ))
+    }
+  </div>
+</Layout>
+
+<style>
+  .grupo {
+    margin-bottom: 2.75rem;
+  }
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.35rem;
+    margin-bottom: 1rem;
+  }
+
+  .grupo-icon {
+    display: grid;
+    place-items: center;
+    width: 2.1rem;
+    height: 2.1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .cat-cyan {
+    color: var(--cyan);
+    background: var(--accent-soft);
+  }
+
+  .cat-violet {
+    color: var(--violet);
+    background: var(--violet-soft);
+  }
+</style>

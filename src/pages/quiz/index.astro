@@ -1,0 +1,151 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Icon from '../../components/Icon.astro';
+import { listaCategorias } from '../../lib/categorias';
+import { conteosPorCategoria } from '../../lib/content';
+import { t } from '../../ui';
+
+const conteos = await conteosPorCategoria();
+const conQuiz = listaCategorias.filter((c) => (conteos.preguntas[c.slug] ?? 0) > 0);
+const proximamente = listaCategorias.filter((c) => (conteos.preguntas[c.slug] ?? 0) === 0);
+const totalPreguntas = Object.values(conteos.preguntas).reduce((a, b) => a + b, 0);
+---
+
+<Layout
+  title="Quiz"
+  description="Quiz interactivos de ingeniería de software por categoría: feedback inmediato, explicación en cada pregunta y tu mejor marca guardada en el navegador."
+>
+  <div class="container">
+    <header class="page-head">
+      <p class="eyebrow">Ponte a prueba</p>
+      <h1>Quiz</h1>
+      <p class="page-sub">
+        {totalPreguntas} preguntas de opción múltiple. Elige categoría, configura dificultad y
+        número de preguntas, y recibe la explicación de cada respuesta. Tu progreso se guarda en
+        este navegador.
+      </p>
+    </header>
+
+    <div class="card-grid">
+      {
+        conQuiz.map((cat, i) => (
+          <a
+            class:list={[
+              'card glass glass-aurora glass-aurora-hover quiz-card reveal',
+              `cat-${cat.color}`,
+            ]}
+            style={`--reveal-delay: ${(i % 3) * 0.07}s`}
+            href={`/quiz/${cat.slug}/`}
+            data-quiz-cat={cat.slug}
+          >
+            <span class="cat-icon">
+              <Icon name={cat.icon} size={22} />
+            </span>
+            <h3>{cat.name}</h3>
+            <p class="card-desc">{cat.description}</p>
+            <p class="card-meta">
+              {t.labels.preguntasCount(conteos.preguntas[cat.slug] ?? 0)}
+              <span class="quiz-stats" data-quiz-stats />
+            </p>
+          </a>
+        ))
+      }
+    </div>
+
+    {
+      proximamente.length > 0 && (
+        <section class="prox">
+          <h2>{t.empty.proximamente}</h2>
+          <ul class="prox-lista">
+            {proximamente.map((cat) => (
+              <li class="badge">
+                <Icon name={cat.icon} size={13} />
+                {cat.name}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</Layout>
+
+<style>
+  .cat-icon {
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .cat-cyan .cat-icon {
+    color: var(--cyan);
+    background: var(--accent-soft);
+  }
+
+  .cat-violet .cat-icon {
+    color: var(--violet);
+    background: var(--violet-soft);
+  }
+
+  .quiz-stats {
+    color: var(--cyan);
+  }
+
+  .quiz-stats:not(:empty)::before {
+    content: '· ';
+    color: var(--text-muted);
+  }
+
+  .card-grid > .quiz-card {
+    height: 100%;
+  }
+
+  .prox {
+    margin-top: 3rem;
+  }
+
+  .prox h2 {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-bottom: 0.9rem;
+  }
+
+  .prox-lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .prox-lista .badge {
+    opacity: 0.75;
+  }
+</style>
+
+<script>
+  // Pinta las estadísticas guardadas (mejor marca e intentos) en cada tarjeta.
+  // Sin datos (o sin localStorage) las tarjetas quedan igual: HTML estático.
+  import { QUIZ_STORAGE_KEY, type QuizStats } from '../../lib/quiz-types';
+
+  try {
+    const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
+    if (raw) {
+      const stats: QuizStats = JSON.parse(raw);
+      document.querySelectorAll<HTMLElement>('[data-quiz-cat]').forEach((tarjeta) => {
+        const datos = stats.categorias[tarjeta.dataset.quizCat ?? ''];
+        const destino = tarjeta.querySelector('[data-quiz-stats]');
+        if (datos && destino) {
+          const veces = datos.intentos === 1 ? '1 intento' : `${datos.intentos} intentos`;
+          destino.textContent = `Mejor: ${datos.mejor}% · ${veces}`;
+        }
+      });
+    }
+  } catch {
+    /* localStorage no disponible: no se muestran stats */
+  }
+</script>

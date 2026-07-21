@@ -1,0 +1,49 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CategoryCard from '../../components/CategoryCard.astro';
+import { listaCategorias } from '../../lib/categorias';
+import { conteosPorCategoria } from '../../lib/content';
+import { t } from '../../ui';
+
+const conteos = await conteosPorCategoria();
+const totalTemas = Object.values(conteos.temas).reduce((a, b) => a + b, 0);
+---
+
+<Layout
+  title="Temas"
+  description="Base de conocimiento de ingeniería de software: algoritmos, estructuras de datos, patrones de diseño, buenas prácticas, metodologías y más."
+>
+  <div class="container">
+    <header class="page-head">
+      <p class="eyebrow">Base de conocimiento</p>
+      <h1>Temas</h1>
+      <p class="page-sub">
+        {totalTemas} artículos organizados en {listaCategorias.length} categorías. Explicaciones
+        claras, con código y sin relleno.
+      </p>
+    </header>
+
+    <div class="card-grid">
+      {
+        listaCategorias.map((cat, i) => {
+          const n = conteos.temas[cat.slug] ?? 0;
+          return (
+            <div class="reveal" style={`--reveal-delay: ${(i % 3) * 0.07}s`}>
+              <CategoryCard
+                categoria={cat}
+                meta={n > 0 ? t.labels.temasCount(n) : t.empty.proximamente}
+                muted={n === 0}
+              />
+            </div>
+          );
+        })
+      }
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .card-grid > .reveal {
+    display: grid;
+  }
+</style>

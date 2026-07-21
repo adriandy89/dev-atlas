@@ -1,0 +1,14 @@
+---
+/**
+ * Etiqueta pequeña con variantes de color del sistema Aurora.
+ * El texto lo decide quien la usa (p. ej. t.labels.dificultad[d]).
+ */
+interface Props {
+  text: string;
+  variant?: 'facil' | 'medio' | 'dificil' | 'cyan' | 'violet' | 'neutral';
+}
+
+const { text, variant = 'neutral' } = Astro.props;
+---
+
+<span class:list={['badge', variant !== 'neutral' && `badge-${variant}`]}>{text}</span>

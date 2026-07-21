@@ -1,0 +1,97 @@
+---
+/**
+ * Cabecera SEO reutilizable: título, descripción, canonical,
+ * Open Graph, Twitter Card y JSON-LD (WebSite + Article opcional).
+ *
+ * Requiere `site` configurado en astro.config.mjs para generar
+ * URLs absolutas (obligatorio para Open Graph y canonical).
+ * Sitio monolingüe (es) — sin hreflang. Al añadir inglés, recuperar
+ * el patrón de alternates del proyecto consulting.
+ */
+import { SITE } from '../config';
+import { t } from '../ui';
+
+interface Props {
+  title: string;
+  description: string;
+  type?: 'website' | 'article';
+  /** Fecha de última actualización (solo artículos) */
+  updated?: Date;
+  /** Nombre de la sección/categoría (solo artículos) */
+  section?: string;
+}
+
+const { title, description, type = 'website', updated, section } = Astro.props;
+
+const fullTitle = title.includes(SITE.name) ? title : `${title} · ${SITE.name}`;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(SITE.ogImage, Astro.site);
+
+const webSiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': new URL('/', Astro.site).href + '#website',
+  name: SITE.name,
+  description: SITE.description,
+  url: Astro.site?.href,
+  inLanguage: 'es',
+  publisher: {
+    '@type': 'Person',
+    name: SITE.author,
+    sameAs: [SITE.social.github],
+  },
+};
+
+const articleSchema =
+  type === 'article'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'TechArticle',
+        headline: title,
+        description,
+        inLanguage: 'es',
+        url: canonicalURL.href,
+        mainEntityOfPage: canonicalURL.href,
+        ...(updated && { dateModified: updated.toISOString() }),
+        ...(section && { articleSection: section }),
+        author: { '@type': 'Person', name: SITE.author },
+      }
+    : undefined;
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+<link rel="sitemap" href="/sitemap-index.xml" />
+
+{/* Open Graph */}
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:image" content={ogImageURL} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={t.meta.ogAlt} />
+<meta property="og:locale" content="es_ES" />
+{
+  type === 'article' && updated && (
+    <meta property="article:modified_time" content={updated.toISOString()} />
+  )
+}
+{type === 'article' && section && <meta property="article:section" content={section} />}
+
+{/* Twitter Card */}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImageURL} />
+
+{/* Datos estructurados */}
+<script is:inline type="application/ld+json" set:html={JSON.stringify(webSiteSchema)} />
+{
+  articleSchema && (
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+  )
+}
