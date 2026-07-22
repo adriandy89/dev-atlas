@@ -7,7 +7,7 @@ export default defineConfig({
   // sustitúyela tras el primer `pnpm run deploy` (wrangler la imprime) y
   // recompila para regenerar canonicals/sitemap/robots. Con dominio propio:
   // cámbiala aquí y añade "routes" en wrangler.jsonc.
-  site: 'https://dev-atlas.workers.dev',
+  site: 'https://dev.byndrix.com',
   trailingSlash: 'always',
   integrations: [sitemap()],
   markdown: {

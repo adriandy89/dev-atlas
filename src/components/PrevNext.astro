@@ -45,11 +45,14 @@ const { anterior, siguiente } = Astro.props;
 }
 
 <style>
+  /* Se alinea con el ancho de lectura de .prose para no estirarse de más
+     en la columna de artículo (más ancha que el texto en escritorio). */
   .prevnext {
     display: grid;
     grid-template-columns: 1fr;
     gap: 0.75rem;
     margin-top: 3rem;
+    max-width: var(--container-prose);
   }
 
   @media (min-width: 680px) {
@@ -61,15 +64,20 @@ const { anterior, siguiente } = Astro.props;
   .pn {
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    padding: 1rem 1.25rem;
+    gap: 0.2rem;
+    padding: 0.7rem 0.95rem;
     border-radius: var(--radius);
     text-decoration: none;
-    transition: border-color 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease;
   }
 
-  .pn:hover {
-    border-color: var(--border-strong);
+  @media (hover: hover) {
+    .pn:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
   }
 
   .pn-next {
@@ -82,7 +90,7 @@ const { anterior, siguiente } = Astro.props;
     align-items: center;
     gap: 0.35rem;
     font-family: var(--font-mono);
-    font-size: var(--text-mono);
+    font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--cyan);
@@ -96,6 +104,8 @@ const { anterior, siguiente } = Astro.props;
   .pn-title {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: 0.9375rem;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    color: var(--text);
   }
 </style>

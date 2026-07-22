@@ -19,11 +19,11 @@
     // /temas → /temas/ con 301 (coincide con trailingSlash: 'always' de Astro)
     "html_handling": "auto-trailing-slash",
     // Sirve dist/404.html con código de estado 404 real (bueno para SEO)
-    "not_found_handling": "404-page"
+    "not_found_handling": "404-page",
   },
 
   // Sin dominio propio aún: se publica en dev-atlas.<cuenta>.workers.dev.
   // Cuando haya dominio: poner esto a false y añadir
-  // "routes": [{ "pattern": "tudominio.com", "custom_domain": true }]
-  "workers_dev": true
+  "routes": [{ "pattern": "dev.byndrix.com", "custom_domain": true }],
+  "workers_dev": false,
 }
