@@ -1,0 +1,453 @@
+---
+/**
+ * Escena 3D del hero: un editor de código en vidrio flotando en perspectiva.
+ * El conjunto se inclina siguiendo al ratón (con inercia, vía rAF + lerp),
+ * un brillo especular persigue el cursor y los chips orbitan a distintas
+ * profundidades (translateZ) → paralaje real al mover el ratón.
+ *
+ * Sin librerías. Solo tokens → claro/oscuro gratis. Con
+ * `prefers-reduced-motion` o sin puntero fino queda una composición
+ * estática igual de digna. `aria-hidden`: es decorativa.
+ */
+---
+
+<div class="escena" data-hero-scene aria-hidden="true">
+  <div class="escena-float">
+    <div class="escena-tilt" data-tilt>
+      <!-- anillo aurora orbitando detrás de la tarjeta -->
+      <div class="aro"></div>
+
+      <!-- ventana de editor -->
+      <figure class="ventana glass glass-aurora">
+        <header class="ventana-cab">
+          <span class="punto p-rojo"></span>
+          <span class="punto p-ambar"></span>
+          <span class="punto p-verde"></span>
+          <span class="ventana-titulo">busqueda-binaria.ts</span>
+        </header>
+        <pre class="cod"><code
+          ><span class="linea" style="--i: 0"><span class="tk-kw">function</span> <span class="tk-fn">buscar</span>(xs: <span class="tk-ty">number</span>[], x: <span class="tk-ty">number</span>) &#123;</span
+          ><span class="linea" style="--i: 1">&nbsp;&nbsp;<span class="tk-kw">let</span> lo = <span class="tk-num">0</span>, hi = xs.<span class="tk-fn">length</span> - <span class="tk-num">1</span>;</span
+          ><span class="linea" style="--i: 2">&nbsp;&nbsp;<span class="tk-kw">while</span> (lo &lt;= hi) &#123;</span
+          ><span class="linea" style="--i: 3">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tk-kw">const</span> m = (lo + hi) &gt;&gt; <span class="tk-num">1</span>;</span
+          ><span class="linea" style="--i: 4">&nbsp;&nbsp;&nbsp;&nbsp;<span class="tk-kw">if</span> (xs[m] === x) <span class="tk-kw">return</span> m;</span
+          ><span class="linea" style="--i: 5">&nbsp;&nbsp;&nbsp;&nbsp;xs[m] &lt; x ? lo = m + <span class="tk-num">1</span> : hi = m - <span class="tk-num">1</span>;</span
+          ><span class="linea" style="--i: 6">&nbsp;&nbsp;&#125;</span
+          ><span class="linea" style="--i: 7">&nbsp;&nbsp;<span class="tk-kw">return</span> -<span class="tk-num">1</span>; <span class="tk-com">// no está</span></span
+          ><span class="linea" style="--i: 8">&#125;<span class="caret"></span></span
+        ></code></pre>
+        <footer class="ventana-pie">
+          <span class="pie-ok">✓ 12/12 pruebas</span>
+          <span>O(log n)</span>
+          <span>UTF-8</span>
+        </footer>
+        <!-- brillo especular que sigue al cursor -->
+        <div class="brillo"></div>
+      </figure>
+
+      <!-- chips flotando a distintas profundidades -->
+      <div class="chip chip-bigo">
+        <div class="chip-inner">
+          <svg width="56" height="22" viewBox="0 0 56 22" fill="none">
+            <path
+              d="M2 19 C 12 8, 24 4.5, 54 2.5"
+              stroke="var(--cyan)"
+              stroke-width="2"
+              stroke-linecap="round"></path>
+          </svg>
+          <span>O(log n)</span>
+        </div>
+      </div>
+      <div class="chip chip-tests">
+        <div class="chip-inner">
+          <span class="dot dot-ok"></span>
+          <span>build · <strong>pasa</strong></span>
+        </div>
+      </div>
+      <div class="chip chip-git">
+        <div class="chip-inner">
+          <span class="dot dot-violet"></span>
+          <span>⎇ main</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .escena {
+    perspective: 1200px;
+    width: min(100%, 30rem);
+    margin-inline: auto;
+  }
+
+  /* Vaivén vertical independiente de la rotación (capas separadas
+     para que la animación no pise el transform del tilt) */
+  @media (prefers-reduced-motion: no-preference) {
+    .escena-float {
+      animation: escenaBob 8s ease-in-out infinite alternate;
+    }
+  }
+
+  @keyframes escenaBob {
+    from {
+      transform: translateY(-7px);
+    }
+    to {
+      transform: translateY(9px);
+    }
+  }
+
+  .escena-tilt {
+    --rx: 0deg;
+    --ry: 0deg;
+    --mx: 50%;
+    --my: 40%;
+    position: relative;
+    transform-style: preserve-3d;
+    /* Pose en reposo ya inclinada: se ve 3D incluso sin ratón */
+    transform: rotateX(calc(7deg + var(--rx))) rotateY(calc(-11deg + var(--ry)));
+    will-change: transform;
+  }
+
+  /* ---- Anillo aurora orbitando detrás ---- */
+  .aro {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 26rem;
+    aspect-ratio: 1;
+    margin: -13rem;
+    border-radius: 50%;
+    background: conic-gradient(
+      from 40deg,
+      transparent 0 8%,
+      var(--cyan) 32%,
+      var(--violet) 58%,
+      transparent 80% 100%
+    );
+    -webkit-mask: radial-gradient(closest-side, transparent 96.5%, #000 97.5%);
+    mask: radial-gradient(closest-side, transparent 96.5%, #000 97.5%);
+    opacity: 0.6;
+    pointer-events: none;
+    transform: translateZ(-80px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .aro {
+      animation: aroSpin 26s linear infinite;
+    }
+  }
+
+  @keyframes aroSpin {
+    from {
+      transform: translateZ(-80px) rotate(0deg);
+    }
+    to {
+      transform: translateZ(-80px) rotate(360deg);
+    }
+  }
+
+  /* ---- Ventana de editor ---- */
+  .ventana {
+    position: relative;
+    margin: 0;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transform: translateZ(24px);
+    transition: box-shadow 0.35s ease;
+  }
+
+  .escena:hover .ventana {
+    box-shadow:
+      inset 0 1px 0 light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.06)),
+      0 24px 60px light-dark(rgba(15, 32, 60, 0.18), rgba(2, 8, 20, 0.6)),
+      0 0 40px var(--glow-cyan);
+  }
+
+  .ventana-cab {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .punto {
+    width: 0.6rem;
+    height: 0.6rem;
+    border-radius: 50%;
+    opacity: 0.85;
+  }
+
+  .p-rojo {
+    background: var(--dificil);
+  }
+
+  .p-ambar {
+    background: var(--medio);
+  }
+
+  .p-verde {
+    background: var(--facil);
+  }
+
+  .ventana-titulo {
+    margin-left: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .cod {
+    margin: 0;
+    padding: 1rem 1.15rem 1.1rem;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.75;
+    color: var(--text);
+    overflow: hidden;
+  }
+
+  .linea {
+    display: block;
+    white-space: nowrap;
+  }
+
+  /* Las líneas "se escriben" en cascada al cargar */
+  @media (prefers-reduced-motion: no-preference) {
+    html.js .linea {
+      opacity: 0;
+      transform: translateX(8px);
+      animation: lineaIn 0.4s ease forwards;
+      animation-delay: calc(0.45s + var(--i) * 110ms);
+    }
+  }
+
+  @keyframes lineaIn {
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .tk-kw {
+    color: var(--violet);
+  }
+
+  .tk-fn {
+    color: var(--cyan);
+  }
+
+  .tk-ty {
+    color: var(--facil);
+  }
+
+  .tk-num {
+    color: var(--medio);
+  }
+
+  .tk-com {
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  .caret {
+    display: inline-block;
+    width: 0.5em;
+    height: 1.05em;
+    margin-left: 3px;
+    vertical-align: -0.18em;
+    background: var(--cyan);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .caret {
+      animation: caretBlink 1.1s steps(1) infinite;
+    }
+  }
+
+  @keyframes caretBlink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .ventana-pie {
+    display: flex;
+    gap: 1.1rem;
+    padding: 0.55rem 1.1rem;
+    border-top: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .pie-ok {
+    color: var(--facil);
+  }
+
+  /* Brillo especular que sigue al cursor (variables --mx/--my desde JS) */
+  .brillo {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      16rem circle at var(--mx) var(--my),
+      light-dark(rgba(14, 116, 144, 0.1), rgba(255, 255, 255, 0.09)),
+      transparent 62%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+  }
+
+  .escena:hover .brillo {
+    opacity: 1;
+  }
+
+  /* ---- Chips flotantes (paralaje por translateZ) ---- */
+  .chip {
+    position: absolute;
+    pointer-events: none;
+  }
+
+  .chip-inner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    background: var(--surface-2);
+    -webkit-backdrop-filter: blur(10px) saturate(150%);
+    backdrop-filter: blur(10px) saturate(150%);
+    border: 1px solid var(--border-strong);
+    box-shadow: 0 10px 28px light-dark(rgba(15, 32, 60, 0.14), rgba(2, 8, 20, 0.5));
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .chip-inner strong {
+    color: var(--facil);
+    font-weight: 600;
+  }
+
+  .dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-ok {
+    background: var(--facil);
+    box-shadow: 0 0 8px var(--facil);
+  }
+
+  .dot-violet {
+    background: var(--violet);
+    box-shadow: 0 0 8px var(--violet);
+  }
+
+  .chip-bigo {
+    top: -1.4rem;
+    right: -1.2rem;
+    transform: translateZ(80px);
+  }
+
+  .chip-bigo .chip-inner {
+    color: var(--cyan);
+  }
+
+  .chip-tests {
+    bottom: -1.1rem;
+    left: -1.3rem;
+    transform: translateZ(60px);
+  }
+
+  .chip-git {
+    top: 42%;
+    right: -2.4rem;
+    transform: translateZ(45px);
+  }
+
+  /* Vaivén propio de cada chip, desfasado (en el inner: no pisa el translateZ) */
+  @media (prefers-reduced-motion: no-preference) {
+    .chip-inner {
+      animation: chipBob 5.5s ease-in-out infinite alternate;
+    }
+
+    .chip-tests .chip-inner {
+      animation-delay: -1.8s;
+    }
+
+    .chip-git .chip-inner {
+      animation-delay: -3.4s;
+    }
+  }
+
+  @keyframes chipBob {
+    from {
+      transform: translateY(-4px);
+    }
+    to {
+      transform: translateY(5px);
+    }
+  }
+</style>
+
+<script>
+  // Tilt 3D con inercia: el objetivo lo fija el ratón, un rAF interpola
+  // hacia él (lerp) y se detiene solo cuando converge — cero coste en reposo.
+  const escena = document.querySelector<HTMLElement>('[data-hero-scene]');
+  const tilt = escena?.querySelector<HTMLElement>('[data-tilt]');
+  const puedeTilt = window.matchMedia(
+    '(hover: hover) and (prefers-reduced-motion: no-preference)',
+  ).matches;
+
+  if (escena && tilt && puedeTilt) {
+    let rx = 0,
+      ry = 0,
+      tx = 0,
+      ty = 0,
+      raf = 0;
+
+    const loop = () => {
+      rx += (tx - rx) * 0.09;
+      ry += (ty - ry) * 0.09;
+      tilt.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+      tilt.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+      if (Math.abs(tx - rx) + Math.abs(ty - ry) > 0.02) {
+        raf = requestAnimationFrame(loop);
+      } else {
+        raf = 0;
+      }
+    };
+
+    const despierta = () => {
+      if (!raf) raf = requestAnimationFrame(loop);
+    };
+
+    escena.addEventListener('pointermove', (e) => {
+      const r = escena.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width;
+      const py = (e.clientY - r.top) / r.height;
+      tx = (0.5 - py) * 14; // rotación X: arriba/abajo
+      ty = (px - 0.5) * 18; // rotación Y: izquierda/derecha
+      tilt.style.setProperty('--mx', (px * 100).toFixed(1) + '%');
+      tilt.style.setProperty('--my', (py * 100).toFixed(1) + '%');
+      despierta();
+    });
+
+    escena.addEventListener('pointerleave', () => {
+      tx = 0;
+      ty = 0;
+      despierta();
+    });
+  }
+</script>

@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Icon from '../components/Icon.astro';
+import HeroScene from '../components/HeroScene.astro';
 import CategoryCard from '../components/CategoryCard.astro';
 import ArticleCard from '../components/ArticleCard.astro';
 import { SITE } from '../config';
@@ -58,26 +59,37 @@ const destacadas = listaCategorias.filter((c) => (conteos.temas[c.slug] ?? 0) > 
   description={SITE.description}
 >
   <section class="hero container">
-    <p class="eyebrow reveal">Atlas de ingeniería de software</p>
-    <h1 class="reveal">
-      Domina los fundamentos.<br />
-      <span class="text-aurora">Construye mejor software.</span>
-    </h1>
-    <p class="hero-sub reveal">
-      Temas explicados con claridad, problemas resueltos paso a paso y quiz para poner a prueba lo
-      que sabes. En español y sin ruido.
-    </p>
-    <div class="hero-cta reveal">
-      <a class="btn btn-primary" href="/temas/">Explorar temas <Icon name="flecha" size={18} /></a>
-      <a class="btn btn-ghost" href="/quiz/">Ponte a prueba</a>
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="hero-copy">
+      <p class="hero-badge reveal">
+        <span class="hero-badge-dot" aria-hidden="true"></span>
+        Atlas de ingeniería de software
+      </p>
+      <h1 class="reveal" style="--reveal-delay: 0.06s">
+        Domina los fundamentos.<br />
+        <span class="text-aurora hero-shimmer">Construye mejor software.</span>
+      </h1>
+      <p class="hero-sub reveal" style="--reveal-delay: 0.12s">
+        Temas explicados con claridad, problemas resueltos paso a paso y quiz para poner a prueba lo
+        que sabes. En español y sin ruido.
+      </p>
+      <div class="hero-cta reveal" style="--reveal-delay: 0.18s">
+        <a class="btn btn-primary" href="/temas/">Explorar temas <Icon name="flecha" size={18} /></a>
+        <a class="btn btn-ghost" href="/quiz/">Ponte a prueba</a>
+      </div>
     </div>
-    <dl class="stats glass reveal">
+    <div class="hero-visual reveal" style="--reveal-delay: 0.2s">
+      <HeroScene />
+    </div>
+    <dl class="stats glass reveal" style="--reveal-delay: 0.24s">
       {
         stats.map((stat) => (
           <div class="stat">
             <dt class="visually-hidden">{stat.etiqueta}</dt>
             <dd>
-              <span class="stat-num text-aurora">{stat.valor}</span>
+              <span class="stat-num text-aurora" data-count={stat.valor}>
+                {stat.valor}
+              </span>
               <span class="stat-label">{stat.etiqueta}</span>
             </dd>
           </div>
@@ -168,17 +180,171 @@ const destacadas = listaCategorias.filter((c) => (conteos.temas[c.slug] ?? 0) > 
       <a class="btn btn-primary" href="/quiz/">Empezar un quiz <Icon name="flecha" size={18} /></a>
     </div>
   </section>
+
+  <script>
+    // Contador animado de las métricas del hero. Sin JS o con reduced-motion
+    // se muestra el número real (ya renderizado en el HTML).
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce) {
+      const nums = document.querySelectorAll<HTMLElement>('.stat-num[data-count]');
+      for (const el of nums) {
+        const target = Number(el.dataset.count);
+        if (!Number.isFinite(target)) continue;
+        const dur = 1100;
+        let start: number | undefined;
+        el.textContent = '0';
+        const tick = (now: number) => {
+          if (start === undefined) start = now;
+          const p = Math.min((now - start) / dur, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = String(Math.round(target * eased));
+          if (p < 1) requestAnimationFrame(tick);
+          else el.textContent = String(target);
+        };
+        requestAnimationFrame(tick);
+      }
+    }
+  </script>
 </Layout>
 
 <style>
   .hero {
+    position: relative;
     padding-block: clamp(4.5rem, 11vw, 7.5rem) clamp(2.5rem, 6vw, 4rem);
+  }
+
+  /* La constelación solo aparece donde hay sitio horizontal real */
+  .hero-visual {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      align-items: center;
+      column-gap: clamp(1.5rem, 4vw, 3.5rem);
+    }
+
+    .hero-copy {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .hero-visual {
+      display: block;
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .stats {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+
+  /* Resplandor aurora que flota tras el titular (radiales suaves, sin blur) */
+  .hero-glow {
+    position: absolute;
+    top: clamp(-4rem, -6vw, -2rem);
+    left: clamp(-8rem, -12vw, -3rem);
+    width: min(48rem, 92%);
+    aspect-ratio: 1.5;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(38% 44% at 32% 40%, var(--glow-cyan), transparent 70%),
+      radial-gradient(42% 46% at 64% 58%, var(--glow-violet), transparent 72%);
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-glow {
+      animation: heroGlowDrift 20s ease-in-out infinite alternate;
+    }
+  }
+
+  @keyframes heroGlowDrift {
+    from {
+      transform: translate3d(-2%, -1%, 0) scale(1);
+    }
+    to {
+      transform: translate3d(4%, 3%, 0) scale(1.1);
+    }
+  }
+
+  /* Píldora con punto "en vivo" */
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.4rem 0.9rem 0.4rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--accent-soft);
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--cyan);
+  }
+
+  .hero-badge-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--cyan);
+    flex-shrink: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-badge-dot {
+      animation: heroPulse 2.4s ease-out infinite;
+    }
+  }
+
+  @keyframes heroPulse {
+    0% {
+      box-shadow: 0 0 0 0 var(--glow-cyan);
+    }
+    70% {
+      box-shadow: 0 0 0 0.5rem transparent;
+    }
+    100% {
+      box-shadow: 0 0 0 0 transparent;
+    }
   }
 
   h1 {
     font-size: var(--text-hero);
     max-width: 16ch;
-    margin-top: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  /* Barrido de brillo sobre el degradado del titular */
+  .hero-shimmer {
+    background: linear-gradient(
+      100deg,
+      var(--cyan) 0%,
+      var(--violet) 45%,
+      var(--cyan) 90%
+    );
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-shimmer {
+      animation: heroShimmer 9s linear infinite;
+    }
+  }
+
+  @keyframes heroShimmer {
+    to {
+      background-position: 220% 0;
+    }
   }
 
   .hero-sub {
@@ -193,6 +359,17 @@ const destacadas = listaCategorias.filter((c) => (conteos.temas[c.slug] ?? 0) > 
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 2rem;
+  }
+
+  /* La flecha del CTA principal avanza al pasar el ratón */
+  .hero-cta .btn-primary :global(svg) {
+    transition: transform 0.25s ease;
+  }
+
+  @media (hover: hover) {
+    .hero-cta .btn-primary:hover :global(svg) {
+      transform: translateX(3px);
+    }
   }
 
   /* Franja de métricas */
@@ -216,6 +393,14 @@ const destacadas = listaCategorias.filter((c) => (conteos.temas[c.slug] ?? 0) > 
     font-weight: 700;
     font-size: 1.9rem;
     line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+    transition: transform 0.25s ease;
+  }
+
+  @media (hover: hover) {
+    .stat:hover .stat-num {
+      transform: translateY(-2px) scale(1.04);
+    }
   }
 
   .stat-label {
