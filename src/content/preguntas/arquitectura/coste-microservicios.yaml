@@ -1,0 +1,14 @@
+question: '¿Cuál es el coste principal de dividir un monolito en microservicios?'
+options:
+  - 'El código fuente ocupa más espacio'
+  - 'Los lenguajes compilados dejan de funcionar'
+  - 'Complejidad operativa: red, despliegues, observabilidad y consistencia entre servicios'
+  - 'Ya no se pueden usar bases de datos relacionales'
+correct: 2
+explanation: >-
+  Cada llamada local se convierte en una llamada de red que puede fallar, y
+  aparecen despliegues múltiples, trazabilidad distribuida y datos repartidos.
+  Los microservicios compran autonomía de equipos pagando con operación — un
+  trato que solo compensa a cierta escala.
+category: arquitectura
+difficulty: medio

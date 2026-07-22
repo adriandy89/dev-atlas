@@ -1,0 +1,13 @@
+question: '¿Qué problema ataca directamente la integración continua (CI)?'
+options:
+  - 'La lentitud de los lenguajes interpretados'
+  - 'El coste de los servidores de producción'
+  - 'La integración tardía: ramas largas que explotan en conflictos al fusionarse'
+  - 'La falta de documentación del código'
+correct: 2
+explanation: >-
+  "Si algo duele, hazlo más a menudo": integrando a diario contra la rama
+  principal, cada conflicto es pequeño y el build roto se detecta a los
+  minutos, no semanas después en un merge gigante.
+category: devops
+difficulty: facil

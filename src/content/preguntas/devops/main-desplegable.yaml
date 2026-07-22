@@ -1,0 +1,13 @@
+question: 'El build de la rama principal lleva roto desde ayer. ¿Qué dicta la práctica de CI?'
+options:
+  - 'Seguir trabajando en ramas hasta que alguien tenga tiempo'
+  - 'Arreglarlo o revertir el cambio de inmediato: es la prioridad del equipo'
+  - 'Desactivar los tests que fallan para desbloquear los merges'
+  - 'Crear una rama principal alternativa'
+correct: 1
+explanation: >-
+  El contrato de CI es que la rama principal siempre está desplegable. Un main
+  rojo bloquea la integración de todo el equipo; se arregla en minutos o se
+  revierte sin drama — y desactivar tests es mentirse en el semáforo.
+category: devops
+difficulty: medio

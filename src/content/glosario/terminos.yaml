@@ -94,3 +94,143 @@
     paga a plazos con refactorización.
   categoria: metodologias
   relacionados: [refactorizacion]
+
+- id: indice
+  termino: Índice (base de datos)
+  definicion: >-
+    Estructura ordenada aparte (habitualmente un árbol B) que mapea valores de
+    una columna a la ubicación de sus filas: convierte búsquedas O(n) en
+    O(log n) a cambio de escrituras algo más lentas y espacio en disco. La
+    mejora de rendimiento con mejor relación esfuerzo/resultado en SQL.
+  categoria: bases-de-datos
+  relacionados: [big-o, transaccion]
+
+- id: transaccion
+  termino: Transacción
+  definicion: >-
+    Grupo de operaciones de base de datos que se ejecuta como una unidad
+    atómica: o todas se aplican o ninguna. Las garantías ACID (atomicidad,
+    consistencia, aislamiento, durabilidad) protegen los datos frente a fallos
+    a mitad de camino y accesos concurrentes.
+  categoria: bases-de-datos
+  relacionados: [indice, race-condition]
+
+- id: test-unitario
+  termino: Test unitario
+  definicion: >-
+    Prueba automática de una unidad de código (función, clase) aislada de sus
+    dependencias. Rápido (milisegundos), determinista y preciso al señalar
+    fallos: la base de la pirámide de testing y la red de seguridad que hace
+    posible refactorizar sin miedo.
+  categoria: testing
+  relacionados: [tdd, refactorizacion]
+
+- id: tdd
+  termino: TDD
+  definicion: >-
+    Test-Driven Development: escribir primero un test que falla (rojo), el
+    código mínimo que lo pasa (verde) y limpiar después (refactor). Más que
+    una técnica de testing es una disciplina de diseño — el ciclo corto obliga
+    a crear unidades pequeñas y desacopladas.
+  categoria: testing
+  relacionados: [test-unitario, refactorizacion]
+
+- id: pipeline
+  termino: Pipeline (CI/CD)
+  definicion: >-
+    Cadena automática de etapas que se ejecuta en cada cambio de código:
+    build, tests, análisis estático y despliegue. Si una etapa falla, la
+    cadena se corta — es la puerta de calidad que mantiene la rama principal
+    siempre desplegable.
+  categoria: devops
+  relacionados: [contenedor, test-unitario]
+
+- id: contenedor
+  termino: Contenedor
+  definicion: >-
+    Unidad de empaquetado que agrupa una aplicación con todas sus dependencias
+    y se ejecuta aislada sobre el kernel del sistema anfitrión (Docker es la
+    herramienta más conocida). Garantiza que "en mi máquina funciona" también
+    valga en producción.
+  categoria: devops
+  relacionados: [pipeline]
+
+- id: jwt
+  termino: JWT
+  definicion: >-
+    JSON Web Token: credencial autocontenida y firmada que un servicio puede
+    verificar sin consultar un almacén central. Está firmado, no cifrado —
+    cualquiera puede leer su contenido — y revocarlo antes de que expire es
+    difícil: dos propiedades que conviene no descubrir en producción.
+  categoria: seguridad
+  relacionados: [api, salt]
+
+- id: salt
+  termino: Salt
+  definicion: >-
+    Valor aleatorio, único por usuario, que se combina con la contraseña antes
+    de aplicar el hash. Hace que dos contraseñas iguales produzcan hashes
+    distintos e inutiliza las tablas precalculadas (rainbow tables). Los
+    algoritmos modernos (bcrypt, Argon2) lo incorporan automáticamente.
+  categoria: seguridad
+  relacionados: [jwt]
+
+- id: wip
+  termino: WIP (trabajo en curso)
+  definicion: >-
+    Work In Progress: la cantidad de tareas empezadas y no terminadas.
+    Limitarlo es la práctica central de Kanban — menos trabajo a medias
+    significa entregas más rápidas (ley de Little) y cuellos de botella
+    visibles. Quince cosas "en curso" es la firma de un equipo que no termina.
+  categoria: metodologias
+  relacionados: [deuda-tecnica]
+
+- id: estabilidad
+  termino: Estabilidad (ordenación)
+  definicion: >-
+    Propiedad de un algoritmo de ordenación que conserva el orden relativo de
+    los elementos con la misma clave. Permite componer ordenaciones sucesivas
+    (por fecha y luego por cliente = agrupado y cronológico). Merge sort es
+    estable; quicksort clásico, no.
+  categoria: algoritmos
+  relacionados: [algoritmo, big-o]
+
+- id: lista-enlazada
+  termino: Lista enlazada
+  definicion: >-
+    Secuencia de nodos dispersos en memoria, cada uno con su valor y un
+    puntero al siguiente. Inserta y borra en O(1) si ya tienes el nodo, pero
+    accede en O(n) y pierde la localidad de caché del array — por eso brilla
+    en patrones concretos (LRU, deques) y no como opción por defecto.
+  categoria: estructuras-de-datos
+  relacionados: [cache, big-o]
+
+- id: bst
+  termino: Árbol binario de búsqueda (BST)
+  definicion: >-
+    Árbol donde todo lo que cuelga a la izquierda de un nodo es menor y lo de
+    la derecha mayor: busca, inserta y borra en O(log n) si está equilibrado.
+    Insertar datos ya ordenados lo degenera a una lista O(n) — de ahí los
+    árboles autoequilibrados (AVL, rojo-negro) de las librerías estándar.
+  categoria: estructuras-de-datos
+  relacionados: [lista-enlazada, indice, big-o]
+
+- id: solid
+  termino: SOLID
+  definicion: >-
+    Cinco heurísticas de diseño orientado a objetos: responsabilidad única,
+    abierto/cerrado, sustitución de Liskov, segregación de interfaces e
+    inversión de dependencias. Todas variaciones de la misma idea — piezas
+    con un propósito claro y dependencias apuntando hacia lo estable.
+  categoria: buenas-practicas
+  relacionados: [refactorizacion, deuda-tecnica]
+
+- id: xss
+  termino: XSS
+  definicion: >-
+    Cross-Site Scripting: inyectar script en una página para que se ejecute
+    en el navegador de otros usuarios, con su sesión. La defensa es escapar
+    en la salida (los frameworks lo hacen por defecto), sanitizar el HTML
+    enriquecido con allowlist y cookies HttpOnly + CSP como redes extra.
+  categoria: seguridad
+  relacionados: [jwt, salt]

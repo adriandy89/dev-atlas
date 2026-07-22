@@ -16,6 +16,7 @@ const REGISTRO: Record<string, () => Promise<WidgetModule>> = {
   queue: () => import('./queue'),
   'hash-table': () => import('./hashTable'),
   'mini-quiz': () => import('./miniQuiz'),
+  sorting: () => import('./sorting'),
 };
 
 export function initWidgets(scope: ParentNode = document) {

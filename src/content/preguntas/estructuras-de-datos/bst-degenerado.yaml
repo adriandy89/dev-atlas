@@ -1,0 +1,14 @@
+question: 'Insertas 1, 2, 3, 4, 5 (en ese orden) en un árbol binario de búsqueda sin balancear. ¿Qué obtienes?'
+options:
+  - 'Un árbol perfectamente equilibrado'
+  - 'Un árbol degenerado: cada nodo solo tiene hijo derecho, y buscar cuesta O(n)'
+  - 'Un error: los BST no aceptan valores consecutivos'
+  - 'Un árbol de altura log n, como siempre'
+correct: 1
+explanation: >-
+  Cada valor nuevo es mayor que el anterior, así que siempre cuelga a la
+  derecha: el "árbol" es una lista inclinada de altura n. Por eso las
+  implementaciones serias (std::map, TreeMap, índices B-tree) usan árboles
+  autoequilibrados que garantizan O(log n) incluso con datos ordenados.
+category: estructuras-de-datos
+difficulty: medio

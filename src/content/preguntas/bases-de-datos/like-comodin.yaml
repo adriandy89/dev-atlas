@@ -1,0 +1,14 @@
+question: "Con un índice B-tree sobre `email`, ¿cuál de estas consultas NO puede aprovecharlo?"
+options:
+  - "WHERE email = 'ana@ejemplo.com'"
+  - "WHERE email LIKE 'ana%'"
+  - "WHERE email LIKE '%@gmail.com'"
+  - "WHERE email > 'm'"
+correct: 2
+explanation: >-
+  Un B-tree navega por prefijos: igualdades, rangos y LIKE con el comodín al
+  final funcionan. Con el comodín al principio no hay prefijo por el que
+  descender el árbol, y la base de datos recurre al full scan (o a un índice
+  de texto completo, que es otra estructura).
+category: bases-de-datos
+difficulty: medio

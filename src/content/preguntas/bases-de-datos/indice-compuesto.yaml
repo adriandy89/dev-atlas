@@ -1,0 +1,14 @@
+question: "Tienes el índice compuesto `(cliente_id, fecha)`. ¿Qué consulta NO lo aprovecha?"
+options:
+  - 'WHERE cliente_id = 42'
+  - 'WHERE cliente_id = 42 AND fecha > ''2026-01-01'''
+  - "WHERE fecha > '2026-01-01'"
+  - 'Todas lo aprovechan por igual'
+correct: 2
+explanation: >-
+  Regla del prefijo izquierdo: un índice (a, b) sirve para buscar por a, o
+  por a y b — pero no por b sola. Es como una guía ordenada por apellido y
+  nombre: no puedes buscar "todos los que se llaman Ana" sin recorrerla
+  entera.
+category: bases-de-datos
+difficulty: medio

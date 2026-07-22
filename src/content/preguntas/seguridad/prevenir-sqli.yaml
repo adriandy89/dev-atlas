@@ -1,0 +1,14 @@
+question: '¿Cuál es la defensa correcta contra la inyección SQL?'
+options:
+  - 'Escapar las comillas del texto del usuario antes de concatenar'
+  - 'Consultas parametrizadas: el SQL y los datos viajan por canales separados'
+  - 'Validar que el email tenga formato de email'
+  - 'Ocultar los mensajes de error de la base de datos'
+correct: 1
+explanation: >-
+  Con parámetros ($1, ?) la consulta se compila primero y los datos llegan
+  después como valores puros: el texto del atacante no puede convertirse en
+  sintaxis, contenga lo que contenga. Escapar a mano es un filtro con
+  esquinas; validar y ocultar errores ayudan, pero no cierran el canal.
+category: seguridad
+difficulty: facil

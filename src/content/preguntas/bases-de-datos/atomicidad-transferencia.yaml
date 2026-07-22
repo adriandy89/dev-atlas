@@ -1,0 +1,14 @@
+question: 'Una transferencia resta en la cuenta A y suma en la B. El servidor se cae entre ambos UPDATE. Con una transacción, ¿qué estado queda?'
+options:
+  - 'A sin los 100 € y B sin recibirlos: se perdió el dinero'
+  - 'El de antes de empezar: la atomicidad deshace la resta no confirmada'
+  - 'Depende del nivel de aislamiento configurado'
+  - 'La mitad del importe en cada cuenta'
+correct: 1
+explanation: >-
+  La A de ACID (atomicidad) garantiza todo o nada: sin COMMIT, la resta en A
+  nunca se hizo visible ni durable, y al reiniciar la base de datos deshace
+  lo pendiente. El estado intermedio "dinero desaparecido" es inalcanzable —
+  para eso existen las transacciones.
+category: bases-de-datos
+difficulty: facil

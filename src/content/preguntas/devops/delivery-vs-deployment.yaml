@@ -1,0 +1,14 @@
+question: '¿Qué diferencia al despliegue continuo (deployment) de la entrega continua (delivery)?'
+options:
+  - 'El despliegue continuo no ejecuta tests'
+  - 'En despliegue continuo, un pipeline verde llega a producción sin aprobación humana'
+  - 'La entrega continua solo funciona con contenedores'
+  - 'Son sinónimos exactos'
+correct: 1
+explanation: >-
+  En entrega continua el artefacto queda listo para producción y una persona
+  decide cuándo pulsar el botón; en despliegue continuo esa decisión también
+  la toma el pipeline. El salto entre ambos es de confianza en los tests, no
+  de herramientas.
+category: devops
+difficulty: medio

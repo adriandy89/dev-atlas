@@ -1,0 +1,14 @@
+question: '¿Qué significa que un algoritmo de ordenación sea estable?'
+options:
+  - 'Que nunca lanza excepciones'
+  - 'Que los elementos con la misma clave conservan su orden relativo original'
+  - 'Que su peor caso es igual a su caso medio'
+  - 'Que no usa memoria adicional'
+correct: 1
+explanation: >-
+  La estabilidad hace que las ordenaciones sucesivas compongan: ordenar por
+  fecha y después por cliente deja las facturas agrupadas por cliente y
+  cronológicas dentro de cada grupo. Merge sort e inserción son estables;
+  quicksort y selección, no.
+category: algoritmos
+difficulty: medio

@@ -5,7 +5,7 @@ category: estructuras-de-datos
 level: fundamentos
 tags: [hash, diccionarios, maps]
 updated: 2026-07-21
-order: 2
+order: 3
 ---
 
 Una tabla hash asocia claves con valores y ofrece inserción, búsqueda y borrado en **O(1) de media**. Es la estructura detrás de `Map` y los objetos de JavaScript, `dict` de Python o `HashMap` de Java — probablemente la estructura de datos más usada del mundo.

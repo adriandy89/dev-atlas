@@ -268,6 +268,62 @@
   font-size: 0.75rem;
 }
 
+/* ----- Ordenación (burbuja paso a paso) ----- */
+.prose .w-sort-viz {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.45rem;
+  height: 9.5rem;
+  padding: 0.25rem 0.25rem 0;
+}
+
+.prose .w-sort-bar {
+  flex: 1;
+  height: var(--h, 50%);
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 0.3rem;
+  border: 1px solid var(--border-strong);
+  border-bottom-width: 2px;
+  border-radius: 8px 8px 3px 3px;
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .prose .w-sort-bar {
+    transition:
+      height 0.3s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+}
+
+.prose .w-sort-bar.is-compara {
+  border-color: var(--cyan);
+  background: var(--accent-soft);
+  color: var(--cyan);
+  box-shadow: 0 0 16px var(--glow-cyan);
+}
+
+.prose .w-sort-bar.is-swap {
+  border-color: var(--violet);
+  background: var(--violet-soft);
+  color: var(--violet);
+  box-shadow: 0 0 16px var(--glow-violet);
+}
+
+.prose .w-sort-bar.is-sorted {
+  border-color: var(--facil);
+  background: color-mix(in srgb, var(--facil) 12%, transparent);
+  color: var(--facil);
+}
+
 /* ----- Mini-quiz "Comprueba lo que sabes" ----- */
 .prose .w-miniquiz {
   --mq-accent: var(--cyan);

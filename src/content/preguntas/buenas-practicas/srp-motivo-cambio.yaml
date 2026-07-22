@@ -1,0 +1,14 @@
+question: 'Una clase Informe calcula totales, los formatea en HTML y los guarda en disco. ¿Qué principio SOLID viola?'
+options:
+  - 'Abierto/cerrado (OCP)'
+  - 'Responsabilidad única (SRP): tiene tres motivos de cambio distintos'
+  - 'Sustitución de Liskov (LSP)'
+  - 'Inversión de dependencias (DIP)'
+correct: 1
+explanation: >-
+  Reglas de negocio, diseño visual e infraestructura cambian por razones y a
+  ritmos distintos — y cada uno obliga a tocar la misma clase. La señal
+  delatora es describir qué hace con la palabra "y": calcula Y formatea Y
+  guarda.
+category: buenas-practicas
+difficulty: medio

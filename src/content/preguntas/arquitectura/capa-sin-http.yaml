@@ -1,0 +1,13 @@
+question: 'En una arquitectura en capas, ¿qué capa NO debería saber nada de HTTP ni de la base de datos?'
+options:
+  - 'La capa de presentación'
+  - 'La capa de dominio'
+  - 'La capa de datos'
+  - 'Todas necesitan conocer ambos'
+correct: 1
+explanation: >-
+  El dominio contiene las reglas de negocio puras: recibe abstracciones y no
+  conoce detalles de infraestructura. Por eso puede testearse sin levantar un
+  servidor ni una base de datos.
+category: arquitectura
+difficulty: facil

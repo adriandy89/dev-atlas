@@ -1,0 +1,14 @@
+question: 'Un usuario logueado cambia /facturas/1041 por /facturas/1042 en la URL y ve la factura de otro cliente. ¿Cómo se llama este fallo?'
+options:
+  - 'Inyección SQL'
+  - 'IDOR: referencia directa insegura a objetos (control de acceso roto)'
+  - 'Cross-Site Scripting (XSS)'
+  - 'Fijación de sesión'
+correct: 1
+explanation: >-
+  La aplicación comprobó quién es el usuario (autenticación) pero no si ese
+  recurso es suyo (autorización). Es la forma más común de Broken Access
+  Control, el número 1 del OWASP Top 10 — la defensa es exigir la propiedad
+  del recurso en la propia consulta, en el servidor.
+category: seguridad
+difficulty: medio

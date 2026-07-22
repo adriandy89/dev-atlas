@@ -121,6 +121,14 @@ video {
   height: auto;
 }
 
+/* El atributo `hidden` debe ganar SIEMPRE. Sin esto, cualquier regla de autor
+   con `display` (p. ej. `.badge { display: inline-flex }`) anula el
+   `display: none` del user-agent y el elemento se muestra pese a estar oculto
+   — así se revelaban los chips "Leído"/"Resuelto" en todas las tarjetas. */
+[hidden] {
+  display: none !important;
+}
+
 a {
   color: inherit;
 }

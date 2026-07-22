@@ -1,0 +1,13 @@
+question: '¿Qué dice la regla de dependencia en una arquitectura en capas?'
+options:
+  - 'Cada capa puede llamar a cualquier otra si mejora el rendimiento'
+  - 'Las dependencias apuntan en una única dirección: hacia abajo'
+  - 'Las capas deben desplegarse en servidores separados'
+  - 'Cada capa debe tener su propia base de datos'
+correct: 1
+explanation: >-
+  La presentación conoce al dominio y el dominio conoce (una abstracción de)
+  los datos — nunca al revés. Esa dirección única es lo que permite cambiar
+  una capa sin arrastrar a las demás.
+category: arquitectura
+difficulty: facil

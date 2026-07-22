@@ -63,7 +63,7 @@ Cada variante cambia una condición del esqueleto. Escribirlas desde cero es uno
 ## Dónde aparece en el mundo real
 
 - `git bisect` busca el commit que rompió el build en O(log n) commits.
-- Los índices B-tree de las bases de datos son búsqueda binaria generalizada a disco.
+- Los [índices B-tree de las bases de datos](/temas/bases-de-datos/indices-de-base-de-datos/) son búsqueda binaria generalizada a disco.
 - Cualquier autocompletado sobre listas ordenadas.
 
 Para entender el coste comparado con otras estrategias, repasa la [notación Big-O](/temas/algoritmos/notacion-big-o/).

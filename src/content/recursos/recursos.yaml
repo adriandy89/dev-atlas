@@ -84,3 +84,66 @@
   category: devops
   type: documentacion
   lang: en
+
+- id: practical-test-pyramid
+  title: The Practical Test Pyramid — Martin Fowler
+  url: https://martinfowler.com/articles/practical-test-pyramid.html
+  description: >-
+    La explicación de referencia de la pirámide de testing, con ejemplos de
+    código reales por nivel y consejos para no acabar en el "cono de helado".
+  category: testing
+  type: articulo
+  lang: en
+
+- id: fowler-architecture
+  title: Software Architecture Guide — martinfowler.com
+  url: https://martinfowler.com/architecture/
+  description: >-
+    Colección curada de artículos sobre arquitectura: capas, microservicios,
+    monolitos, y cuándo cada decisión compensa. Lectura pausada y sin humo.
+  category: arquitectura
+  type: documentacion
+  lang: en
+
+- id: github-actions-docs
+  title: Documentación de GitHub Actions
+  url: https://docs.github.com/es/actions
+  description: >-
+    La referencia oficial (en español) para montar pipelines de CI/CD:
+    sintaxis de workflows, eventos, runners, caché y despliegues.
+  category: devops
+  type: documentacion
+  lang: es
+
+- id: use-the-index-luke
+  title: Use The Index, Luke!
+  url: https://use-the-index-luke.com/es
+  description: >-
+    Libro web gratuito sobre índices y rendimiento SQL: cómo funcionan los
+    B-tree, por qué tu consulta ignora el índice y cómo leer planes de
+    ejecución. Con versión en español.
+  category: bases-de-datos
+  type: libro
+  lang: es
+
+- id: scrum-guide
+  title: La Guía de Scrum
+  url: https://scrumguides.org
+  description: >-
+    La definición oficial de Scrum por sus creadores, en menos de 15 páginas
+    (con traducción al español). Útil también para detectar cuánto "Scrum"
+    de tu empresa no está aquí.
+  category: metodologias
+  type: documentacion
+  lang: es
+
+- id: owasp-cheatsheets
+  title: OWASP Cheat Sheet Series
+  url: https://cheatsheetseries.owasp.org
+  description: >-
+    Guías concisas y accionables por tema de seguridad: almacenamiento de
+    contraseñas, sesiones, JWT, validación de entrada… El complemento
+    práctico del Top 10.
+  category: seguridad
+  type: documentacion
+  lang: en

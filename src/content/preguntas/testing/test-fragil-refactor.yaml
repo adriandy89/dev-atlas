@@ -1,0 +1,14 @@
+question: 'Refactorizas una función sin cambiar su comportamiento y varios tests se rompen. ¿Qué indica?'
+options:
+  - 'Que el refactor introdujo un bug con seguridad'
+  - 'Que los tests estaban acoplados a la implementación en lugar de al comportamiento'
+  - 'Que faltan tests E2E'
+  - 'Que la cobertura era demasiado alta'
+correct: 1
+explanation: >-
+  Si el comportamiento observable no cambió, un buen test no debería
+  enterarse del refactor. Tests que afirman sobre métodos internos llamados o
+  detalles de estructura se rompen con cada mejora — prueba lo que la función
+  devuelve o provoca, no cómo lo hace.
+category: testing
+difficulty: medio

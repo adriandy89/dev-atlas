@@ -1,0 +1,13 @@
+question: 'Un índice acelera las lecturas. ¿Cuál es su precio?'
+options:
+  - 'Ninguno: los índices son gratis'
+  - 'Las consultas SELECT se vuelven más lentas'
+  - 'Escrituras más lentas (cada INSERT/UPDATE actualiza los índices) y más espacio en disco'
+  - 'La tabla queda bloqueada para siempre'
+correct: 2
+explanation: >-
+  Cada modificación de la tabla debe mantener actualizados todos sus índices,
+  y cada índice ocupa disco. Por eso se indexan las columnas que las
+  consultas realmente usan en WHERE, JOIN y ORDER BY — no "por si acaso".
+category: bases-de-datos
+difficulty: facil

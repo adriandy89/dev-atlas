@@ -1,0 +1,14 @@
+question: 'Tu API responde 403 Forbidden. ¿Qué control ha fallado?'
+options:
+  - 'La autenticación: el servidor no sabe quién es el usuario'
+  - 'La autorización: el usuario está identificado pero no tiene permiso'
+  - 'La validación de entrada'
+  - 'El certificado TLS'
+correct: 1
+explanation: >-
+  401 Unauthorized significa "no sé quién eres" (fallo de autenticación); 403
+  Forbidden significa "sé quién eres, y no puedes hacer esto" (fallo de
+  autorización). Distinguirlos es distinguir las dos preguntas de seguridad
+  de toda petición.
+category: seguridad
+difficulty: facil

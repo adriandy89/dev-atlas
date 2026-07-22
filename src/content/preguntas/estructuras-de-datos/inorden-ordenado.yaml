@@ -1,0 +1,14 @@
+question: '¿Qué propiedad tiene el recorrido inorden (izquierda → nodo → derecha) de un árbol binario de búsqueda?'
+options:
+  - 'Visita los nodos por niveles, de arriba abajo'
+  - 'Visita los valores en orden ascendente'
+  - 'Visita primero todas las hojas'
+  - 'Ninguna en particular: depende de cómo se insertó'
+correct: 1
+explanation: >-
+  La invariante del BST (menores a la izquierda, mayores a la derecha) hace
+  que el recorrido inorden produzca los valores ordenados — es su superpoder.
+  De ahí sale un truco de entrevista: verificar si un árbol es un BST válido
+  equivale a comprobar que su inorden sale ordenado.
+category: estructuras-de-datos
+difficulty: medio

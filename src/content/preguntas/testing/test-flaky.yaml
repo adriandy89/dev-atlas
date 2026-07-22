@@ -1,0 +1,13 @@
+question: 'Un test que a veces pasa y a veces falla sin que el código cambie se llama…'
+options:
+  - 'Test de humo'
+  - 'Test flaky (no determinista)'
+  - 'Test de regresión'
+  - 'Test de mutación'
+correct: 1
+explanation: >-
+  Un test flaky entrena al equipo a ignorar los fallos ("relanza, seguro que
+  pasa") y destruye la confianza en toda la suite. Se arregla o se elimina —
+  convivir con él es la peor opción.
+category: testing
+difficulty: facil

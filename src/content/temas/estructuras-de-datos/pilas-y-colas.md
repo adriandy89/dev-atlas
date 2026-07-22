@@ -5,7 +5,7 @@ category: estructuras-de-datos
 level: fundamentos
 tags: [pilas, colas, lifo, fifo]
 updated: 2026-07-21
-order: 1
+order: 2
 ---
 
 Pilas y colas no son estructuras complejas: son **restricciones deliberadas** sobre una lista. Justo esa restricción es la que las hace útiles: el código que las usa se vuelve predecible y fácil de razonar.

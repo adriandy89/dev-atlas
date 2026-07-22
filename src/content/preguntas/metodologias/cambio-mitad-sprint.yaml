@@ -1,0 +1,14 @@
+question: 'Llega una petición "urgente pero no crítica" a mitad de sprint. ¿Qué responde Scrum, y qué respondería Kanban?'
+options:
+  - 'Ambos la meten inmediatamente: el cliente manda'
+  - 'Scrum la protege para el siguiente sprint; Kanban la encola y entra en cuanto hay hueco de WIP'
+  - 'Ambos la rechazan hasta el próximo trimestre'
+  - 'Scrum la mete de inmediato; Kanban la aplaza al siguiente sprint'
+correct: 1
+explanation: >-
+  Es la diferencia práctica clave entre ambos marcos: Scrum protege el
+  alcance del sprint para dar foco (lo urgente espera días, no meses), y
+  Kanban, al no tener sprints, deja entrar el trabajo en cuanto el límite de
+  WIP lo permite. Por eso soporte y operaciones suelen preferir Kanban.
+category: metodologias
+difficulty: medio

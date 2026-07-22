@@ -1,0 +1,14 @@
+question: 'Un switch sobre el método de pago crece con cada proveedor nuevo y se repite en tres ficheros. ¿Qué patrón lo resuelve?'
+options:
+  - 'Singleton: una única instancia del procesador de pagos'
+  - 'Strategy: cada proveedor como implementación intercambiable de una interfaz común'
+  - 'Observer: notificar a los proveedores cuando llega un pago'
+  - 'Ninguno: los switch largos son inevitables'
+correct: 1
+explanation: >-
+  Strategy encapsula cada variante tras la misma firma y sustituye el switch
+  por un mapa: añadir un proveedor es añadir una entrada, sin tocar código
+  que ya funciona (principio abierto/cerrado). Observer resolvería otra cosa
+  — avisar a N interesados de que algo pasó.
+category: patrones-de-diseno
+difficulty: facil

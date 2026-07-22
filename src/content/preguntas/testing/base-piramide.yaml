@@ -1,0 +1,13 @@
+question: 'Según la pirámide de testing, ¿qué tipo de test debería ser el más numeroso?'
+options:
+  - 'Tests E2E, porque simulan al usuario real'
+  - 'Tests de integración, porque prueban piezas juntas'
+  - 'Tests unitarios, porque son rápidos, precisos y baratos de mantener'
+  - 'Tests manuales exploratorios'
+correct: 2
+explanation: >-
+  Cuanto más arriba en la pirámide, más realista pero también más lento, más
+  frágil y más caro de depurar es el test. La base ancha de unitarios da
+  feedback en milisegundos y localiza el fallo con precisión.
+category: testing
+difficulty: facil

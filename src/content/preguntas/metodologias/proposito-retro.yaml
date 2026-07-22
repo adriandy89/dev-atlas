@@ -1,0 +1,14 @@
+question: '¿Qué distingue a la retrospectiva de la review en Scrum?'
+options:
+  - 'Nada: son dos nombres de la misma reunión'
+  - 'La review examina el producto con los interesados; la retro examina el proceso del equipo'
+  - 'La retro es para reportar el avance al jefe del proyecto'
+  - 'La review es opcional y la retro obligatoria'
+correct: 1
+explanation: >-
+  En la review se enseña el incremento y se recoge feedback del producto; en
+  la retrospectiva el equipo, a solas, examina cómo trabajó y elige mejoras
+  concretas. Es el mecanismo con el que el proceso se ajusta a sí mismo cada
+  sprint.
+category: metodologias
+difficulty: facil

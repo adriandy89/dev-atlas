@@ -1,0 +1,13 @@
+question: '¿Cuál es la práctica central de Kanban?'
+options:
+  - 'Sprints de duración fija con un objetivo'
+  - 'Limitar el trabajo en curso (WIP) en cada columna del tablero'
+  - 'Reuniones diarias de una hora'
+  - 'Estimar todas las tareas en puntos de historia'
+correct: 1
+explanation: >-
+  Sin límite de WIP, un tablero Kanban es solo una lista bonita. El límite
+  obliga a terminar antes de empezar: baja el trabajo a medias, acorta el
+  tiempo de entrega (ley de Little) y hace visibles los cuellos de botella.
+category: metodologias
+difficulty: facil
