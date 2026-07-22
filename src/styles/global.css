@@ -623,6 +623,14 @@ a.card {
   background: var(--surface);
 }
 
+/* La primera columna suele ser una etiqueta corta o notación (p. ej.
+   "O(log n)"): evita saltos de línea raros. Si no cabe, la tabla ya
+   tiene overflow-x: auto y se desplaza en vez de romperse. */
+.prose td:first-child,
+.prose th:first-child {
+  white-space: nowrap;
+}
+
 .prose hr {
   border: 0;
   border-top: 1px solid var(--border);
