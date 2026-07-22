@@ -3,6 +3,7 @@ import { render } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import Badge from '../../components/Badge.astro';
 import Icon from '../../components/Icon.astro';
+import WidgetRuntime from '../../components/widgets/WidgetRuntime.astro';
 import { CATEGORIAS } from '../../lib/categorias';
 import { getProblemas } from '../../lib/content';
 import { formatDate } from '../../lib/format';
@@ -68,6 +69,22 @@ const { Content } = await render(entry);
       <Content />
     </div>
 
+    <WidgetRuntime />
+
+    <div class="progreso-accion" data-progress-accion data-kind="problema" data-id={entry.id}>
+      <button
+        type="button"
+        class="btn btn-ghost"
+        data-toggle
+        aria-pressed="false"
+        data-label-idle={t.progreso.marcarResuelto}
+        data-label-done={t.progreso.resuelto}
+      >
+        <Icon name="check" size={16} />
+        <span data-label>{t.progreso.marcarResuelto}</span>
+      </button>
+    </div>
+
     <p class="volver">
       <a class="btn btn-ghost btn-sm" href="/problemas/">
         <span class="flip"><Icon name="flecha" size={16} /></span>
@@ -130,8 +147,14 @@ const { Content } = await render(entry);
     color: var(--text-muted);
   }
 
-  .volver {
+  .progreso-accion {
     margin-top: 2.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .volver {
+    margin-top: 2rem;
   }
 
   .flip {
@@ -139,3 +162,8 @@ const { Content } = await render(entry);
     transform: scaleX(-1);
   }
 </style>
+
+<script>
+  import { initProgresoAcciones } from '../../lib/progress-ui';
+  initProgresoAcciones();
+</script>

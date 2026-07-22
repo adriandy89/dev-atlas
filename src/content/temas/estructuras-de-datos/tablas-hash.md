@@ -30,6 +30,10 @@ Hay infinitas claves posibles y buckets finitos, así que dos claves distintas a
 
 Cada bucket guarda una pequeña lista de entradas. Al buscar, se recorre esa lista comparando claves. Java añade un refinamiento: si una lista crece demasiado, la convierte en árbol para garantizar O(log n) en el peor caso.
 
+Inserta claves y observa en qué bucket caen; con pocas casillas provocarás colisiones que se encadenan:
+
+<div data-widget="hash-table" data-buckets="8"></div>
+
 ### Direccionamiento abierto (open addressing)
 
 Si el bucket está ocupado, se prueba el siguiente según una secuencia (lineal, cuadrática…). Aprovecha mejor la caché de la CPU, pero borrar elementos se complica (hacen falta marcas de "borrado").

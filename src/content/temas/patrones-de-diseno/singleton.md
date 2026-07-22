@@ -31,6 +31,20 @@ const config = Configuracion.getInstancia();
 
 Las tres piezas: constructor **privado** (nadie más puede instanciar), campo estático con la instancia, y un método `getInstancia()` con inicialización perezosa.
 
+<div class="w-diagram">
+<svg viewBox="0 0 460 190" role="img" aria-label="Tres servicios acceden a una única instancia compartida de Configuración a través de getInstancia().">
+<defs><marker id="sg-arw" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" class="w-edge-arrow"></path></marker></defs>
+<rect class="w-node" x="14" y="14" width="120" height="38" rx="9"></rect><text class="w-node-label" x="74" y="38" text-anchor="middle">Servicio A</text>
+<rect class="w-node" x="14" y="76" width="120" height="38" rx="9"></rect><text class="w-node-label" x="74" y="100" text-anchor="middle">Servicio B</text>
+<rect class="w-node" x="14" y="138" width="120" height="38" rx="9"></rect><text class="w-node-label" x="74" y="162" text-anchor="middle">Servicio C</text>
+<rect class="w-node-accent" x="300" y="62" width="150" height="66" rx="11"></rect><text class="w-node-label" x="375" y="90" text-anchor="middle">Configuración</text><text class="w-node-sub" x="375" y="110" text-anchor="middle">instancia única</text>
+<line class="w-edge" x1="134" y1="33" x2="298" y2="88" marker-end="url(#sg-arw)"></line>
+<line class="w-edge" x1="134" y1="95" x2="298" y2="95" marker-end="url(#sg-arw)"></line>
+<line class="w-edge" x1="134" y1="157" x2="298" y2="102" marker-end="url(#sg-arw)"></line>
+</svg>
+<p class="w-diagram-cap">Un único punto de acceso global: todos comparten la misma instancia.</p>
+</div>
+
 En lenguajes con hilos (Java, C#), la inicialización perezosa necesita sincronización — el clásico *double-checked locking*. En JavaScript el problema no existe por ser monohilo, y de hecho **un módulo ES ya es un singleton**: se evalúa una vez y se cachea.
 
 ```ts

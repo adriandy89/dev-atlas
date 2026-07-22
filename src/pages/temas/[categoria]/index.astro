@@ -104,3 +104,15 @@ const temas = await getTemas(cat.slug);
     display: grid;
   }
 </style>
+
+<script>
+  // Revela el chip "Leído" en las tarjetas de temas ya leídos.
+  import { getProgreso } from '../../../lib/progress';
+
+  const progreso = getProgreso();
+  document.querySelectorAll<HTMLElement>('[data-tema-id]').forEach((card) => {
+    if (progreso.temas[card.dataset.temaId ?? '']) {
+      card.querySelector<HTMLElement>('[data-estado-leido]')?.removeAttribute('hidden');
+    }
+  });
+</script>

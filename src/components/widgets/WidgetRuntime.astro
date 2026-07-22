@@ -1,0 +1,16 @@
+---
+/**
+ * Runtime de los widgets de artículo. Colócalo UNA vez al final de una
+ * plantilla `.prose` (páginas de tema y de problema): importa el CSS global de
+ * los widgets y arranca el cargador, que hidrata cualquier `[data-widget]`.
+ *
+ * Como Astro solo incluye el script/CSS de un componente en las páginas que lo
+ * renderizan, esto no afecta a la home ni al resto de páginas.
+ */
+import '../../styles/widgets.css';
+---
+
+<script>
+  import { initWidgets } from '../../scripts/widgets';
+  initWidgets();
+</script>

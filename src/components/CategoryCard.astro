@@ -1,6 +1,7 @@
 ---
 import type { Categoria } from '../lib/categorias';
 import Icon from './Icon.astro';
+import ProgressBar from './ProgressBar.astro';
 
 interface Props {
   categoria: Categoria;
@@ -10,9 +11,20 @@ interface Props {
   href?: string;
   /** Atenuada (categoría aún sin contenido) */
   muted?: boolean;
+  /** Muestra la barra de progreso de temas leídos (hidratada en cliente) */
+  showProgress?: boolean;
+  /** Total de temas de la categoría (denominador de la barra) */
+  total?: number;
 }
 
-const { categoria, meta, href = `/temas/${categoria.slug}/`, muted = false } = Astro.props;
+const {
+  categoria,
+  meta,
+  href = `/temas/${categoria.slug}/`,
+  muted = false,
+  showProgress = false,
+  total = 0,
+} = Astro.props;
 ---
 
 <a
@@ -27,6 +39,14 @@ const { categoria, meta, href = `/temas/${categoria.slug}/`, muted = false } = A
   <h3>{categoria.name}</h3>
   <p class="card-desc">{categoria.description}</p>
   {meta && <p class="card-meta">{meta}</p>}
+  {
+    showProgress && total > 0 && (
+      <div class="cat-progreso" data-cat-slug={categoria.slug} data-total={total} hidden>
+        <ProgressBar label={`Progreso en ${categoria.name}`} />
+        <span class="cat-progreso-texto" data-cat-conteo />
+      </div>
+    )
+  }
 </a>
 
 <style>
@@ -55,5 +75,18 @@ const { categoria, meta, href = `/temas/${categoria.slug}/`, muted = false } = A
 
   .is-muted .card-meta {
     color: var(--violet);
+  }
+
+  .cat-progreso {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+  }
+
+  .cat-progreso-texto {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--cyan);
   }
 </style>

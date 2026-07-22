@@ -5,8 +5,9 @@ import TOC from '../../../components/TOC.astro';
 import PrevNext from '../../../components/PrevNext.astro';
 import Badge from '../../../components/Badge.astro';
 import Icon from '../../../components/Icon.astro';
+import WidgetRuntime from '../../../components/widgets/WidgetRuntime.astro';
 import { CATEGORIAS } from '../../../lib/categorias';
-import { getTemas, slugDeTema, prevNext } from '../../../lib/content';
+import { getTemas, getPreguntas, slugDeTema, prevNext } from '../../../lib/content';
 import { readingTime } from '../../../lib/reading-time';
 import { formatDate } from '../../../lib/format';
 import { t } from '../../../ui';
@@ -37,6 +38,19 @@ const enlace = (e: CollectionEntry<'temas'>) => ({
 });
 
 const nivelVariant = { fundamentos: 'cyan', intermedio: 'violet', avanzado: 'medio' } as const;
+
+// Pool de preguntas de la categoría para el widget mini-quiz (si el artículo
+// incluye uno). Mismo formato que quiz/[categoria].astro; el widget lo lee del
+// <script type="application/json"> incrustado en el DOM.
+const poolPreguntas = (await getPreguntas(entry.data.category)).map((p) => ({
+  id: p.id,
+  question: p.data.question,
+  options: p.data.options,
+  correct: p.data.correct,
+  explanation: p.data.explanation,
+  difficulty: p.data.difficulty,
+}));
+const preguntasJson = JSON.stringify(poolPreguntas).replace(/</g, '\\u003c');
 ---
 
 <Layout
@@ -76,6 +90,20 @@ const nivelVariant = { fundamentos: 'cyan', intermedio: 'violet', avanzado: 'med
         <Content />
       </div>
 
+      <div class="progreso-accion" data-progress-accion data-kind="tema" data-id={entry.id}>
+        <button
+          type="button"
+          class="btn btn-ghost"
+          data-toggle
+          aria-pressed="false"
+          data-label-idle={t.progreso.marcarLeido}
+          data-label-done={t.progreso.leido}
+        >
+          <Icon name="check" size={16} />
+          <span data-label>{t.progreso.marcarLeido}</span>
+        </button>
+      </div>
+
       {
         entry.data.tags.length > 0 && (
           <p class="article-tags">
@@ -90,6 +118,13 @@ const nivelVariant = { fundamentos: 'cyan', intermedio: 'violet', avanzado: 'med
         anterior={vecinos.anterior && enlace(vecinos.anterior)}
         siguiente={vecinos.siguiente && enlace(vecinos.siguiente)}
       />
+
+      {
+        poolPreguntas.length > 0 && (
+          <script type="application/json" data-preguntas-pool set:html={preguntasJson} />
+        )
+      }
+      <WidgetRuntime />
     </article>
 
     <aside class="article-aside">
@@ -143,6 +178,12 @@ const nivelVariant = { fundamentos: 'cyan', intermedio: 'violet', avanzado: 'med
     color: var(--text-muted);
   }
 
+  .progreso-accion {
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+  }
+
   .article-tags {
     display: flex;
     flex-wrap: wrap;
@@ -171,3 +212,8 @@ const nivelVariant = { fundamentos: 'cyan', intermedio: 'violet', avanzado: 'med
     }
   }
 </style>
+
+<script>
+  import { initProgresoAcciones } from '../../../lib/progress-ui';
+  initProgresoAcciones();
+</script>

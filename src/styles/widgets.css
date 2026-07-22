@@ -1,0 +1,539 @@
+/* ============================================================
+   WIDGETS DE ARTÍCULO — estilos globales (tokens del sistema Aurora).
+   Van aquí (y no en <style> scoped) porque el DOM de los widgets se
+   inyecta dentro de .prose (markdown) y/o lo genera JS, y el scoping
+   de Astro no lo alcanza. Todo usa variables de color → claro/oscuro
+   gratis. Las animaciones se activan solo sin prefers-reduced-motion.
+   ============================================================ */
+
+/* ----- Marco común de los widgets con JS ----- */
+.prose .w-frame {
+  margin-block: 1.75rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .prose .w-frame {
+    background: var(--surface-solid);
+  }
+}
+
+.prose .w-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.prose .w-estado {
+  margin-top: 0.9rem;
+  min-height: 1.4em;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--text-muted);
+}
+
+.prose .w-estado b {
+  color: var(--cyan);
+  font-weight: 600;
+}
+
+/* Celda genérica (pila, cola, búsqueda) */
+.prose .w-cell {
+  display: grid;
+  place-items: center;
+  min-width: 2.75rem;
+  height: 2.75rem;
+  padding: 0 0.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .prose .w-cell {
+    transition:
+      transform 0.25s ease,
+      opacity 0.25s ease,
+      border-color 0.25s ease,
+      background-color 0.25s ease;
+  }
+
+  .prose .w-cell.is-entrando {
+    animation: w-pop 0.28s ease;
+  }
+}
+
+@keyframes w-pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ----- Pila (LIFO): columna, la cima arriba ----- */
+.prose .w-stack-viz {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 8rem;
+  justify-content: flex-start;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+}
+
+.prose .w-stack-viz .w-cell {
+  width: 6rem;
+}
+
+.prose .w-cell.is-top {
+  border-color: var(--cyan);
+  background: var(--accent-soft);
+  color: var(--cyan);
+  box-shadow: 0 0 16px var(--glow-cyan);
+}
+
+.prose .w-marca {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cyan);
+}
+
+/* ----- Cola (FIFO): fila, frente a la izquierda ----- */
+.prose .w-queue-viz {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 4.5rem;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: 1px dashed var(--border);
+  overflow-x: auto;
+}
+
+.prose .w-cell.is-front {
+  border-color: var(--cyan);
+  background: var(--accent-soft);
+  color: var(--cyan);
+}
+
+.prose .w-cell.is-back {
+  border-color: var(--violet);
+}
+
+/* ----- Búsqueda binaria ----- */
+.prose .w-cells {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.prose .w-binsearch .w-cell {
+  flex-direction: column;
+  min-width: 2.5rem;
+  gap: 0.1rem;
+}
+
+.prose .w-binsearch .w-cell .w-idx {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.prose .w-cell.is-out {
+  opacity: 0.32;
+}
+
+.prose .w-cell.is-lo,
+.prose .w-cell.is-hi {
+  border-color: var(--violet);
+  color: var(--violet);
+}
+
+.prose .w-cell.is-mid {
+  border-color: var(--cyan);
+  background: var(--accent-soft);
+  color: var(--cyan);
+  box-shadow: 0 0 16px var(--glow-cyan);
+}
+
+.prose .w-cell.is-found {
+  border-color: var(--facil);
+  background: color-mix(in srgb, var(--facil) 14%, transparent);
+  color: var(--facil);
+}
+
+/* ----- Tabla hash ----- */
+.prose .w-hash-input {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.prose .w-hash-input input {
+  flex: 1;
+  min-width: 8rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  color: var(--text);
+  font: inherit;
+}
+
+.prose .w-hash-input input:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.prose .w-hash-buckets {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.prose .w-bucket {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.prose .w-bucket.is-activo {
+  border-color: var(--cyan);
+  box-shadow: 0 0 14px var(--glow-cyan);
+}
+
+.prose .w-bucket-idx {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 7px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--text-muted);
+}
+
+.prose .w-bucket-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.prose .w-chip-item {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--cyan) 30%, transparent);
+  background: var(--accent-soft);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+/* ----- Mini-quiz "Comprueba lo que sabes" ----- */
+.prose .w-miniquiz {
+  --mq-accent: var(--cyan);
+}
+
+.prose .w-miniquiz-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--cyan);
+  margin-bottom: 1rem;
+}
+
+.prose .w-mq-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.prose .w-mq-pregunta {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.prose .w-mq-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.prose .w-mq-opt {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-align: left;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .prose .w-mq-opt {
+    transition:
+      border-color 0.2s ease,
+      background-color 0.2s ease;
+  }
+}
+
+.prose .w-mq-opt:not(:disabled):hover {
+  border-color: light-dark(rgba(14, 116, 144, 0.5), rgba(34, 211, 238, 0.5));
+  background: var(--accent-soft);
+}
+
+/* Letra de la opción (el mini-quiz reutiliza el nombre de clase del quiz,
+   pero aquel estilo es scoped y no alcanza el DOM del markdown) */
+.prose .w-mq-opt .q-opt-letra {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--cyan);
+}
+
+.prose .w-mq-opt.is-correct {
+  border-color: color-mix(in srgb, var(--facil) 55%, transparent);
+  background: color-mix(in srgb, var(--facil) 12%, transparent);
+  color: var(--facil);
+}
+
+.prose .w-mq-opt.is-wrong {
+  border-color: color-mix(in srgb, var(--dificil) 55%, transparent);
+  background: color-mix(in srgb, var(--dificil) 10%, transparent);
+  color: var(--dificil);
+}
+
+.prose .w-mq-feedback {
+  margin-top: 0.6rem;
+  font-size: var(--text-small);
+  color: var(--text-muted);
+  min-height: 1em;
+}
+
+.prose .w-mq-feedback:empty {
+  display: none;
+}
+
+/* ============================================================
+   Big-O — gráfica de crecimiento (SVG + toggles CSS :has(), SIN JS)
+   ============================================================ */
+.prose .w-bigo {
+  --c-1: var(--facil);
+  --c-logn: var(--cyan);
+  --c-n: var(--violet);
+  --c-nlogn: var(--medio);
+  --c-n2: light-dark(#ea580c, #fb923c);
+  --c-2n: var(--dificil);
+
+  margin-block: 1.75rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+
+.prose .w-bigo svg {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  margin-inline: auto;
+}
+
+.prose .w-bigo-grid {
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.prose .w-bigo-axis {
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+}
+
+.prose .w-bigo-axis-label {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.prose .w-bigo [data-curve] {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.prose .w-bigo [data-curve='1'] {
+  stroke: var(--c-1);
+}
+.prose .w-bigo [data-curve='logn'] {
+  stroke: var(--c-logn);
+}
+.prose .w-bigo [data-curve='n'] {
+  stroke: var(--c-n);
+}
+.prose .w-bigo [data-curve='nlogn'] {
+  stroke: var(--c-nlogn);
+}
+.prose .w-bigo [data-curve='n2'] {
+  stroke: var(--c-n2);
+}
+.prose .w-bigo [data-curve='2n'] {
+  stroke: var(--c-2n);
+}
+
+/* Leyenda = checkboxes estilo chip */
+.prose .w-bigo-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.prose .w-bigo-leg input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.prose .w-bigo-leg span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.prose .w-bigo-dot {
+  width: 0.65rem;
+  height: 0.2rem;
+  border-radius: 2px;
+  background: var(--leg, var(--cyan));
+}
+
+.prose .w-bigo-leg input:checked + span {
+  color: var(--text);
+  border-color: var(--leg, var(--cyan));
+}
+
+.prose .w-bigo-leg input:focus-visible + span {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* Ocultar la curva cuya casilla está desmarcada (sin JS) */
+.prose .w-bigo:has(#bigo-1:not(:checked)) [data-curve='1'],
+.prose .w-bigo:has(#bigo-logn:not(:checked)) [data-curve='logn'],
+.prose .w-bigo:has(#bigo-n:not(:checked)) [data-curve='n'],
+.prose .w-bigo:has(#bigo-nlogn:not(:checked)) [data-curve='nlogn'],
+.prose .w-bigo:has(#bigo-n2:not(:checked)) [data-curve='n2'],
+.prose .w-bigo:has(#bigo-2n:not(:checked)) [data-curve='2n'] {
+  display: none;
+}
+
+/* ============================================================
+   Diagramas SVG estáticos (patrones): tokens + currentColor
+   ============================================================ */
+.prose .w-diagram {
+  margin-block: 1.75rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  text-align: center;
+}
+
+.prose .w-diagram svg {
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  margin-inline: auto;
+}
+
+.prose .w-diagram-cap {
+  margin-top: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--text-muted);
+}
+
+.prose .w-node {
+  fill: var(--surface-2);
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+}
+
+.prose .w-node-accent {
+  fill: var(--accent-soft);
+  stroke: var(--cyan);
+  stroke-width: 1.5;
+}
+
+.prose .w-node-label {
+  fill: var(--text);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.prose .w-node-sub {
+  fill: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.prose .w-edge {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 1.5;
+}
+
+.prose .w-edge-arrow {
+  fill: var(--cyan);
+}

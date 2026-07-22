@@ -38,6 +38,10 @@ function busquedaBinaria(arr: number[], objetivo: number): number {
 }
 ```
 
+Recórrela paso a paso y observa cómo se descarta la mitad del array en cada iteración:
+
+<div data-widget="binary-search" data-array="1,3,4,7,9,11,15,20,25,31" data-target="20"></div>
+
 ## Las trampas clásicas
 
 ### Errores off-by-one

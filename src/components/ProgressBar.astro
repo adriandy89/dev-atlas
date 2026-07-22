@@ -1,0 +1,48 @@
+---
+/**
+ * Barra de progreso accesible reutilizable. Se renderiza al 0% en estático;
+ * una isla de cliente fija el `width` del relleno y `aria-valuenow`.
+ * Extraída del patrón `.q-barra` de `components/quiz/Quiz.astro`.
+ */
+interface Props {
+  label: string;
+  class?: string;
+}
+const { label, class: klass } = Astro.props;
+---
+
+<div
+  class:list={['pbar', klass]}
+  role="progressbar"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+  aria-label={label}
+  data-pbar
+>
+  <span class="pbar-fill" data-pbar-fill></span>
+</div>
+
+<style>
+  .pbar {
+    height: 6px;
+    border-radius: 999px;
+    background: light-dark(rgba(15, 32, 60, 0.08), rgba(148, 197, 255, 0.1));
+    overflow: hidden;
+  }
+
+  .pbar-fill {
+    display: block;
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    background: var(--grad-aurora);
+    transition: width 0.45s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pbar-fill {
+      transition: none;
+    }
+  }
+</style>

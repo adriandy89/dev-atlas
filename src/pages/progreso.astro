@@ -1,0 +1,392 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import ProgressBar from '../components/ProgressBar.astro';
+import EmptyState from '../components/EmptyState.astro';
+import { listaCategorias } from '../lib/categorias';
+import { conteosPorCategoria, getProblemas } from '../lib/content';
+import { t } from '../ui';
+
+// Totales calculados en build; el cliente rellena TUS números desde
+// localStorage (progreso + quiz). Ver el <script> al final.
+const conteos = await conteosPorCategoria();
+const problemas = await getProblemas();
+
+// Los ids de problema son slugs planos: para contar resueltos por categoría
+// el cliente necesita este mapa id → categoría.
+const problemaCategoria: Record<string, string> = {};
+for (const p of problemas) problemaCategoria[p.id] = p.data.category;
+
+const suma = (r: Record<string, number>) => Object.values(r).reduce((a, b) => a + b, 0);
+const totalTemas = suma(conteos.temas);
+const totalProblemas = suma(conteos.problemas);
+
+const cats = listaCategorias
+  .map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    color: c.color,
+    icon: c.icon,
+    temas: conteos.temas[c.slug] ?? 0,
+    problemas: conteos.problemas[c.slug] ?? 0,
+    preguntas: conteos.preguntas[c.slug] ?? 0,
+  }))
+  .filter((c) => c.temas + c.problemas + c.preguntas > 0);
+
+const datos = {
+  categorias: cats.map(({ slug, temas, problemas, preguntas }) => ({
+    slug,
+    temas,
+    problemas,
+    preguntas,
+  })),
+  problemaCategoria,
+  totalTemas,
+  totalProblemas,
+};
+const json = JSON.stringify(datos).replace(/</g, '\\u003c');
+---
+
+<Layout title={t.progreso.titulo} description={t.progreso.sub}>
+  <script type="application/json" data-progreso-datos set:html={json} />
+
+  <div class="container">
+    <header class="page-head">
+      <p class="eyebrow">{t.progreso.eyebrow}</p>
+      <h1>{t.progreso.titulo}</h1>
+      <p class="page-sub">{t.progreso.sub}</p>
+    </header>
+
+    {/* Estado vacío: visible por defecto; el script lo oculta si hay progreso */}
+    <div data-vacio>
+      <EmptyState
+        icon="progreso"
+        title={t.progreso.vacio}
+        sub={t.progreso.vacioSub}
+        ctaHref="/temas/"
+        ctaLabel={t.progreso.vacioCta}
+      />
+    </div>
+
+    {/* Panel: oculto por defecto; el script lo revela y rellena */}
+    <div class="panel" data-panel data-confirm={t.progreso.reiniciarConfirm} hidden>
+      <section class="resumen card glass glass-aurora" data-global>
+        <div class="resumen-top">
+          <div>
+            <p class="resumen-num text-aurora" data-global-pct>0%</p>
+            <p class="resumen-label">{t.progreso.global}</p>
+          </div>
+          <div class="resumen-racha">
+            <p class="resumen-racha-num" data-racha>0</p>
+            <p class="resumen-label">{t.progreso.racha}</p>
+          </div>
+        </div>
+        <ProgressBar label={t.progreso.global} />
+        <dl class="resumen-stats">
+          <div>
+            <dt>{t.nav.temas}</dt>
+            <dd data-total-temas>0/{totalTemas}</dd>
+          </div>
+          <div>
+            <dt>{t.nav.problemas}</dt>
+            <dd data-total-problemas>0/{totalProblemas}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <h2 class="por-cat-titulo">Por categoría</h2>
+      <div class="card-grid">
+        {
+          cats.map((c) => (
+            <article class:list={['prog-cat card glass', `cat-${c.color}`]} data-cat={c.slug}>
+              <div class="prog-cat-head">
+                <span class="cat-icon">
+                  <Icon name={c.icon} size={18} />
+                </span>
+                <h3>{c.name}</h3>
+                <span class="prog-cat-pct" data-cat-pct />
+              </div>
+              <ProgressBar label={`Progreso en ${c.name}`} />
+              <dl class="prog-cat-stats">
+                <div>
+                  <dt>{t.nav.temas}</dt>
+                  <dd data-cat-temas>{c.temas > 0 ? `0/${c.temas}` : '—'}</dd>
+                </div>
+                <div>
+                  <dt>{t.nav.problemas}</dt>
+                  <dd data-cat-problemas>{c.problemas > 0 ? `0/${c.problemas}` : '—'}</dd>
+                </div>
+                <div>
+                  <dt>{t.nav.quiz}</dt>
+                  <dd data-cat-quiz>—</dd>
+                </div>
+              </dl>
+            </article>
+          ))
+        }
+      </div>
+
+      <div class="acciones">
+        <button type="button" class="btn btn-ghost btn-sm" data-reiniciar>
+          <Icon name="x" size={15} />
+          {t.progreso.reiniciar}
+        </button>
+        <p class="privacidad">{t.progreso.privacidad}</p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .resumen {
+    border-radius: var(--radius-lg);
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .resumen-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .resumen-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
+    line-height: 1;
+  }
+
+  .resumen-racha {
+    text-align: right;
+  }
+
+  .resumen-racha-num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.75rem;
+    color: var(--cyan);
+  }
+
+  .resumen-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  .resumen-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 2.5rem;
+    margin: 0;
+  }
+
+  .resumen-stats dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--text-muted);
+  }
+
+  .resumen-stats dd {
+    margin: 0.2rem 0 0;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.25rem;
+  }
+
+  .por-cat-titulo {
+    font-size: var(--text-h3);
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .prog-cat {
+    gap: 0.9rem;
+  }
+
+  .prog-cat-head {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .prog-cat-head h3 {
+    font-size: 1rem;
+    margin-right: auto;
+  }
+
+  .cat-icon {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9px;
+    border: 1px solid var(--border);
+  }
+
+  .cat-cyan .cat-icon {
+    color: var(--cyan);
+    background: var(--accent-soft);
+  }
+
+  .cat-violet .cat-icon {
+    color: var(--violet);
+    background: var(--violet-soft);
+  }
+
+  .prog-cat-pct {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--cyan);
+  }
+
+  .prog-cat-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 0;
+  }
+
+  .prog-cat-stats dt {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  .prog-cat-stats dd {
+    margin: 0.1rem 0 0;
+    font-size: var(--text-small);
+    font-weight: 600;
+  }
+
+  .acciones {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    margin-top: 2.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .privacidad {
+    font-size: var(--text-small);
+    color: var(--text-muted);
+  }
+</style>
+
+<script>
+  import { getProgreso, reiniciarProgreso } from '../lib/progress';
+  import { QUIZ_STORAGE_KEY, type QuizStats } from '../lib/quiz-types';
+
+  type Datos = {
+    categorias: { slug: string; temas: number; problemas: number; preguntas: number }[];
+    problemaCategoria: Record<string, string>;
+    totalTemas: number;
+    totalProblemas: number;
+  };
+
+  function setBar(scope: Element, pct: number) {
+    scope.querySelector('[data-pbar]')?.setAttribute('aria-valuenow', String(pct));
+    const fill = scope.querySelector<HTMLElement>('[data-pbar-fill]');
+    if (fill) fill.style.width = `${pct}%`;
+  }
+
+  const datosEl = document.querySelector('[data-progreso-datos]');
+  const panel = document.querySelector<HTMLElement>('[data-panel]');
+  const vacio = document.querySelector<HTMLElement>('[data-vacio]');
+  if (datosEl && panel && vacio) {
+    const datos: Datos = JSON.parse(datosEl.textContent ?? '{}');
+    const progreso = getProgreso();
+
+    let quiz: QuizStats = { categorias: {}, racha: { actual: 0, mejor: 0 } };
+    try {
+      const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
+      if (raw) quiz = JSON.parse(raw);
+    } catch {
+      /* sin quiz guardado */
+    }
+
+    const temasLeidos = Object.keys(progreso.temas).length;
+    const resueltos = Object.values(progreso.problemas).filter((p) => p.estado === 'resuelto');
+    const quizIntentos = Object.values(quiz.categorias).reduce((a, c) => a + c.intentos, 0);
+
+    const hayProgreso =
+      temasLeidos > 0 ||
+      resueltos.length > 0 ||
+      quizIntentos > 0 ||
+      progreso.actividad.dias.length > 0;
+
+    if (hayProgreso) {
+      vacio.hidden = true;
+      panel.hidden = false;
+
+      // --- Resumen global ---
+      const completables = datos.totalTemas + datos.totalProblemas;
+      const hechos = temasLeidos + resueltos.length;
+      const pct = completables > 0 ? Math.round((hechos / completables) * 100) : 0;
+      const global = document.querySelector('[data-global]');
+      if (global) setBar(global, pct);
+      const pctEl = document.querySelector('[data-global-pct]');
+      if (pctEl) pctEl.textContent = `${pct}%`;
+      const tt = document.querySelector('[data-total-temas]');
+      if (tt) tt.textContent = `${temasLeidos}/${datos.totalTemas}`;
+      const tp = document.querySelector('[data-total-problemas]');
+      if (tp) tp.textContent = `${resueltos.length}/${datos.totalProblemas}`;
+      const rachaEl = document.querySelector('[data-racha]');
+      if (rachaEl) {
+        const dias = progreso.actividad.rachaActual;
+        const rec = progreso.actividad.rachaMejor;
+        rachaEl.textContent =
+          dias + (dias === 1 ? ' día' : ' días') + (rec > dias ? ` · récord ${rec}` : '');
+      }
+
+      // --- Resueltos por categoría (mapear id plano → categoría) ---
+      const resueltosPorCat: Record<string, number> = {};
+      for (const [id, p] of Object.entries(progreso.problemas)) {
+        if (p.estado !== 'resuelto') continue;
+        const cat = datos.problemaCategoria[id];
+        if (cat) resueltosPorCat[cat] = (resueltosPorCat[cat] ?? 0) + 1;
+      }
+
+      // --- Tarjetas por categoría ---
+      document.querySelectorAll<HTMLElement>('[data-cat]').forEach((card) => {
+        const slug = card.dataset.cat ?? '';
+        const info = datos.categorias.find((c) => c.slug === slug);
+        if (!info) return;
+
+        const leidos = Object.keys(progreso.temas).filter((id) => id.split('/')[0] === slug).length;
+        const pres = resueltosPorCat[slug] ?? 0;
+        const denom = info.temas + info.problemas;
+        const catPct = denom > 0 ? Math.round(((leidos + pres) / denom) * 100) : 0;
+        setBar(card, catPct);
+
+        const pctEl = card.querySelector('[data-cat-pct]');
+        if (pctEl) pctEl.textContent = `${catPct}%`;
+        const temasEl = card.querySelector('[data-cat-temas]');
+        if (temasEl && info.temas > 0) temasEl.textContent = `${leidos}/${info.temas}`;
+        const probEl = card.querySelector('[data-cat-problemas]');
+        if (probEl && info.problemas > 0) probEl.textContent = `${pres}/${info.problemas}`;
+        const quizEl = card.querySelector('[data-cat-quiz]');
+        const mejor = quiz.categorias[slug]?.mejor;
+        if (quizEl && typeof mejor === 'number') quizEl.textContent = `${mejor}%`;
+      });
+    }
+
+    // --- Reiniciar ---
+    document.querySelector('[data-reiniciar]')?.addEventListener('click', () => {
+      if (confirm(panel.dataset.confirm ?? '¿Borrar todo tu progreso?')) {
+        reiniciarProgreso();
+        location.reload();
+      }
+    });
+  }
+</script>

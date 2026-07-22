@@ -21,6 +21,10 @@ pila.push(2);
 pila.pop(); // 2 — el último que entró
 ```
 
+Pruébalo: solo puedes tocar la cima.
+
+<div data-widget="stack"></div>
+
 ### Dónde aparece
 
 - **El call stack**: cada llamada a función se apila; al retornar, se desapila. Un desbordamiento de pila es literalmente esta estructura llenándose.
@@ -52,6 +56,10 @@ class Cola<T> {
 }
 ```
 
+Pruébalo: entra por el final, sale por el frente.
+
+<div data-widget="queue"></div>
+
 ### Dónde aparece
 
 - **Colas de tareas y mensajería** (RabbitMQ, SQS, BullMQ): procesar trabajo en orden de llegada.
@@ -63,5 +71,7 @@ class Cola<T> {
 - **Deque** (double-ended queue): inserta y extrae por ambos extremos en O(1).
 - **Cola de prioridad**: sale primero el elemento más urgente, no el más antiguo; se implementa con un heap.
 - **Buffer circular**: cola de tamaño fijo sobre un array, sin mover elementos — la base de los buffers de streaming.
+
+<div data-widget="mini-quiz" data-count="3"></div>
 
 La pregunta que decide cuál usar siempre es la misma: **¿en qué orden necesito recuperar lo que guardo?** Si la respuesta es "el más reciente", pila; "el más antiguo", cola; "el más importante", cola de prioridad.

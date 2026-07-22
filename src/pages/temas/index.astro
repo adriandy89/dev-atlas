@@ -33,6 +33,8 @@ const totalTemas = Object.values(conteos.temas).reduce((a, b) => a + b, 0);
                 categoria={cat}
                 meta={n > 0 ? t.labels.temasCount(n) : t.empty.proximamente}
                 muted={n === 0}
+                showProgress={n > 0}
+                total={n}
               />
             </div>
           );
@@ -47,3 +49,27 @@ const totalTemas = Object.values(conteos.temas).reduce((a, b) => a + b, 0);
     display: grid;
   }
 </style>
+
+<script>
+  // Pinta la barra de temas leídos por categoría sobre las tarjetas estáticas.
+  // Sin progreso (o sin localStorage) las tarjetas quedan igual.
+  import { getProgreso } from '../../lib/progress';
+
+  const progreso = getProgreso();
+  document.querySelectorAll<HTMLElement>('[data-cat-slug]').forEach((el) => {
+    const slug = el.dataset.catSlug ?? '';
+    const total = Number(el.dataset.total) || 0;
+    if (total === 0) return;
+    // Los ids de tema son `categoria/slug`: cuenta por prefijo de categoría.
+    const leidos = Object.keys(progreso.temas).filter((id) => id.split('/')[0] === slug).length;
+    if (leidos === 0) return;
+
+    const pct = Math.round((leidos / total) * 100);
+    el.querySelector('[data-pbar]')?.setAttribute('aria-valuenow', String(pct));
+    const fill = el.querySelector<HTMLElement>('[data-pbar-fill]');
+    if (fill) fill.style.width = `${pct}%`;
+    const conteo = el.querySelector('[data-cat-conteo]');
+    if (conteo) conteo.textContent = `${leidos}/${total} leídos`;
+    el.hidden = false;
+  });
+</script>

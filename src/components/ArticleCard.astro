@@ -24,10 +24,14 @@ const nivelVariant = {
 } as const;
 ---
 
-<a class="card glass glass-aurora glass-aurora-hover" href={href}>
+<a class="card glass glass-aurora glass-aurora-hover" href={href} data-tema-id={entry.id}>
   <div class="card-badges">
     <Badge text={t.labels.nivel[entry.data.level]} variant={nivelVariant[entry.data.level]} />
     {showCategory && <Badge text={showCategory} />}
+    <span class="badge badge-cyan card-estado" data-estado-leido hidden>
+      <Icon name="check" size={12} />
+      {t.progreso.leido}
+    </span>
   </div>
   <h3>{entry.data.title}</h3>
   <p class="card-desc">{entry.data.description}</p>

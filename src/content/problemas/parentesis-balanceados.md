@@ -27,6 +27,10 @@ balanceada(")")      → false
 
 Es el mismo problema que resuelve tu editor al marcar un paréntesis sin pareja, o un parser al validar bloques anidados.
 
+La clave es una pila: cada apertura se apila y cada cierre debe casar con la cima. Refresca la mecánica LIFO antes de resolverlo:
+
+<div data-widget="stack"></div>
+
 <details class="solucion">
 <summary>Ver solución</summary>
 

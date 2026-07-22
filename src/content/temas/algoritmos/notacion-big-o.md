@@ -30,6 +30,32 @@ Por eso dos algoritmos O(n) pueden tener rendimientos reales muy distintos. Big-
 | O(n²) | Cuadrática | Doble bucle anidado |
 | O(2ⁿ) | Exponencial | Subconjuntos por fuerza bruta |
 
+Activa y desactiva curvas para comparar cómo escala cada clase al crecer la entrada:
+
+<figure class="w-bigo">
+<div class="w-bigo-legend">
+<label class="w-bigo-leg" style="--leg: var(--c-1)"><input type="checkbox" id="bigo-1" checked><span><i class="w-bigo-dot"></i>O(1)</span></label>
+<label class="w-bigo-leg" style="--leg: var(--c-logn)"><input type="checkbox" id="bigo-logn" checked><span><i class="w-bigo-dot"></i>O(log n)</span></label>
+<label class="w-bigo-leg" style="--leg: var(--c-n)"><input type="checkbox" id="bigo-n" checked><span><i class="w-bigo-dot"></i>O(n)</span></label>
+<label class="w-bigo-leg" style="--leg: var(--c-nlogn)"><input type="checkbox" id="bigo-nlogn" checked><span><i class="w-bigo-dot"></i>O(n log n)</span></label>
+<label class="w-bigo-leg" style="--leg: var(--c-n2)"><input type="checkbox" id="bigo-n2" checked><span><i class="w-bigo-dot"></i>O(n²)</span></label>
+<label class="w-bigo-leg" style="--leg: var(--c-2n)"><input type="checkbox" id="bigo-2n" checked><span><i class="w-bigo-dot"></i>O(2ⁿ)</span></label>
+</div>
+<svg viewBox="0 0 340 210" role="img" aria-label="Gráfica del crecimiento de las clases de complejidad: O(1) plana, O(log n) casi plana, O(n) lineal, O(n log n) algo superior, O(n²) cuadrática y O(2ⁿ) exponencial que se dispara.">
+<line class="w-bigo-axis" x1="40" y1="20" x2="40" y2="188"></line>
+<line class="w-bigo-axis" x1="40" y1="188" x2="326" y2="188"></line>
+<text class="w-bigo-axis-label" x="330" y="185" text-anchor="end">n →</text>
+<text class="w-bigo-axis-label" x="36" y="16" text-anchor="end">ops</text>
+<polyline data-curve="1" points="44,180 322,180"></polyline>
+<polyline data-curve="logn" points="44,182 90,158 136,146 182,138 228,132 274,127 322,123"></polyline>
+<polyline data-curve="n" points="44,185 182,128 322,72"></polyline>
+<polyline data-curve="nlogn" points="44,186 90,168 136,146 182,120 228,92 274,64 322,38"></polyline>
+<polyline data-curve="n2" points="44,187 90,183 136,171 182,150 228,118 274,74 316,26"></polyline>
+<polyline data-curve="2n" points="44,188 122,186 176,178 206,162 226,132 242,86 252,26"></polyline>
+</svg>
+<figcaption class="w-diagram-cap">Misma entrada, coste muy distinto: para n grande, O(2ⁿ) y O(n²) se disparan mientras O(log n) apenas se mueve.</figcaption>
+</figure>
+
 ## Cómo estimarla leyendo código
 
 Reglas rápidas que resuelven la mayoría de los casos:
@@ -58,5 +84,7 @@ La **complejidad espacial** usa la misma notación para la memoria extra. Invert
 - **Optimizar sin medir.** Big-O orienta el diseño, pero el cuello de botella real se encuentra con un profiler.
 - **Ignorar el tamaño real de n.** Para n = 20, un O(n²) simple puede ganar a un O(n log n) con constantes grandes.
 - **Confundir peor caso con caso medio.** Quicksort es O(n²) en el peor caso pero O(n log n) de media, y en la práctica es excelente.
+
+<div data-widget="mini-quiz" data-count="3"></div>
 
 Dominar Big-O es el requisito para todo lo demás en esta categoría: cuando compares [búsqueda binaria](/temas/algoritmos/busqueda-binaria/) con una búsqueda lineal, la notación te dirá exactamente qué estás ganando.

@@ -56,6 +56,7 @@ const dificultades = ['facil', 'medio', 'dificil'] as const;
         }
       </div>
       <p class="conteo" aria-live="polite" data-conteo>{t.labels.problemasCount(problemas.length)}</p>
+      <p class="resueltos" data-resueltos hidden></p>
     </div>
 
     <ul class="card-grid lista-problemas" data-lista>
@@ -99,6 +100,12 @@ const dificultades = ['facil', 'medio', 'dificil'] as const;
     font-family: var(--font-mono);
     font-size: var(--text-mono);
     color: var(--text-muted);
+  }
+
+  .resueltos {
+    font-family: var(--font-mono);
+    font-size: var(--text-mono);
+    color: var(--facil);
   }
 
   .lista-problemas {
@@ -152,4 +159,29 @@ const dificultades = ['facil', 'medio', 'dificil'] as const;
       aplicar();
     });
   });
+</script>
+
+<script>
+  // Pinta los estados de progreso (resuelto / intentado) sobre las tarjetas
+  // y muestra el total de resueltos. Sin progreso, no cambia nada.
+  import { getProgreso } from '../../lib/progress';
+
+  const progreso = getProgreso();
+  let resueltos = 0;
+  document.querySelectorAll<HTMLElement>('[data-problema-id]').forEach((card) => {
+    const p = progreso.problemas[card.dataset.problemaId ?? ''];
+    if (!p) return;
+    if (p.estado === 'resuelto') {
+      card.querySelector('[data-estado-resuelto]')?.removeAttribute('hidden');
+      resueltos++;
+    } else {
+      card.querySelector('[data-estado-intentado]')?.removeAttribute('hidden');
+    }
+  });
+
+  const resueltosEl = document.querySelector<HTMLElement>('[data-resueltos]');
+  if (resueltos > 0 && resueltosEl) {
+    resueltosEl.textContent = `${resueltos} ${resueltos === 1 ? 'resuelto' : 'resueltos'} ✓`;
+    resueltosEl.hidden = false;
+  }
 </script>

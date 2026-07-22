@@ -440,6 +440,18 @@ a.card {
   font-size: 0.875rem;
 }
 
+/* Estado "hecho" (tema leído / problema resuelto): verde suave */
+.btn.is-done {
+  border-color: color-mix(in srgb, var(--facil) 45%, transparent);
+  background: color-mix(in srgb, var(--facil) 12%, transparent);
+  color: var(--facil);
+}
+
+.btn.is-done:hover {
+  border-color: color-mix(in srgb, var(--facil) 60%, transparent);
+  background: color-mix(in srgb, var(--facil) 16%, transparent);
+}
+
 /* Chips de filtro (estado con aria-pressed) */
 .chip {
   display: inline-flex;
@@ -679,6 +691,54 @@ details.panel > :not(summary) {
 .prose details > :not(summary) + :not(summary),
 details.panel > :not(summary) + :not(summary) {
   margin-top: 1em;
+}
+
+/* ------------------------------------------------------------
+   Callouts (HTML crudo en markdown, estilado por .prose, sin JS).
+   Uso en .md (con líneas en blanco dentro, como <details>):
+     <aside class="callout callout-truco">
+     <p class="callout-titulo">Truco</p>
+
+     Texto en **markdown**…
+     </aside>
+   Variantes: callout-nota | callout-aviso | callout-truco | callout-idea
+   ------------------------------------------------------------ */
+.prose .callout {
+  --callout-color: var(--cyan);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--callout-color);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--callout-color) 7%, transparent);
+  padding: 1rem 1.25rem;
+}
+
+.prose .callout > * + * {
+  margin-top: 0.7em;
+}
+
+.prose .callout-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-small);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--callout-color);
+}
+
+.prose .callout-nota {
+  --callout-color: var(--cyan);
+}
+.prose .callout-aviso {
+  --callout-color: var(--medio);
+}
+.prose .callout-truco {
+  --callout-color: var(--violet);
+}
+.prose .callout-idea {
+  --callout-color: var(--facil);
 }
 
 /* ------------------------------------------------------------
